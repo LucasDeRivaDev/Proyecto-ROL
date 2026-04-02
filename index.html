@@ -1159,6 +1159,7 @@
 
           <div class="controls">
             <button class="action-btn" onclick="exportCampaignBundle()"><i class="fa-solid fa-book-open"></i> Exportar campaña completa</button>
+            <button class="action-btn secondary" onclick="exportCampaignHTML()"><i class="fa-solid fa-scroll"></i> Exportar ficha HTML</button>
             <button class="action-btn secondary" onclick="printCampaignSheet()"><i class="fa-solid fa-print"></i> Modo impresión</button>
           </div>
 
@@ -2941,11 +2942,206 @@
       ];
     }
 
+    function getCampaignVisuals() {
+      const visuals = [
+        { title: "Retrato del NPC", containerId: "npcPortrait" },
+        { title: "Mapa de Mazmorra", containerId: "dungeonMap" },
+        { title: "Escena de Misión", containerId: "questScene" }
+      ];
+
+      return visuals.map((item) => {
+        const svg = document.getElementById(item.containerId).querySelector("svg");
+        const markup = !svg
+          ? ""
+          : svg.outerHTML.includes('xmlns="http://www.w3.org/2000/svg"')
+            ? svg.outerHTML
+            : svg.outerHTML.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+
+        return {
+          title: item.title,
+          ready: Boolean(svg),
+          markup
+        };
+      });
+    }
+
     function escapeHtml(text) {
       return text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
+    }
+
+    function exportCampaignHTML() {
+      const sections = getCampaignSections().filter((section) => section.ready);
+      const visuals = getCampaignVisuals().filter((visual) => visual.ready);
+
+      if (!sections.length && !visuals.length) {
+        alert("Generá al menos un elemento antes de exportar la ficha HTML.");
+        return;
+      }
+
+      const visualCards = visuals.length
+        ? visuals.map((visual) => `
+            <article class="sheet-visual-card">
+              <h3>${escapeHtml(visual.title)}</h3>
+              <div class="sheet-visual">${visual.markup}</div>
+            </article>
+          `).join("")
+        : '<p class="sheet-empty">No hay visuales generados en esta sesión.</p>';
+
+      const contentBlocks = sections.length
+        ? sections.map((section) => `
+            <article class="sheet-block">
+              <h2>${escapeHtml(section.title)}</h2>
+              <pre>${escapeHtml(section.text)}</pre>
+            </article>
+          `).join("")
+        : '<p class="sheet-empty">No hay bloques de texto generados en esta sesión.</p>';
+
+      const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RolMaster Kit - Ficha de Sesión</title>
+  <style>
+    :root {
+      --paper: #f4e4bc;
+      --paper-soft: #f8efd4;
+      --ink: #2d1c12;
+      --accent: #7b4a1d;
+      --border: #4a301d;
+      --shadow: rgba(45, 28, 18, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f8efd4, #efd9a9);
+      padding: 24px 14px 40px;
+    }
+    .sheet {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 3px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 36px var(--shadow);
+      overflow: hidden;
+    }
+    .sheet-header {
+      padding: 28px 22px 18px;
+      text-align: center;
+      border-bottom: 2px solid rgba(74, 48, 29, 0.2);
+      background: linear-gradient(180deg, rgba(123,74,29,0.1), rgba(255,255,255,0.08));
+    }
+    .sheet-header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--accent);
+    }
+    .sheet-header p {
+      margin: 8px 0 0;
+      font-size: 1rem;
+    }
+    .sheet-section {
+      padding: 20px;
+    }
+    .sheet-section h2.section-title {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+    .sheet-visual-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .sheet-visual-card,
+    .sheet-block {
+      border: 2px solid rgba(74, 48, 29, 0.2);
+      border-radius: 14px;
+      background: rgba(255,248,231,0.62);
+      padding: 14px;
+    }
+    .sheet-visual-card h3,
+    .sheet-block h2 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+    .sheet-visual {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .sheet-visual svg {
+      width: 100%;
+      height: auto;
+      max-height: 240px;
+      display: block;
+    }
+    .sheet-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .sheet-block pre {
+      margin: 0;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 0.98rem;
+    }
+    .sheet-empty {
+      margin: 0;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255,248,231,0.52);
+      border: 1px dashed rgba(74, 48, 29, 0.25);
+      font-style: italic;
+    }
+    @media (max-width: 800px) {
+      .sheet-visual-grid,
+      .sheet-content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header class="sheet-header">
+      <h1>RolMaster Kit: La Forja del Dungeon Master</h1>
+      <p>Ficha de sesión exportada el ${escapeHtml(new Date().toLocaleString("es-AR"))}</p>
+    </header>
+    <section class="sheet-section">
+      <h2 class="section-title">Galería Visual</h2>
+      <div class="sheet-visual-grid">${visualCards}</div>
+    </section>
+    <section class="sheet-section">
+      <h2 class="section-title">Contenido de Campaña</h2>
+      <div class="sheet-content-grid">${contentBlocks}</div>
+    </section>
+  </main>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ficha-sesion-rolmaster-kit.html";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
     // Compone una hoja de sesión limpia para impresión o PDF con el contenido generado.
