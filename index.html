@@ -633,6 +633,83 @@
         min-height: 250px;
       }
     }
+
+    .print-sheet {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: #f8efd4;
+        padding: 0;
+      }
+
+      body::before,
+      body::after,
+      .shell {
+        display: none !important;
+      }
+
+      .print-sheet {
+        display: block;
+        min-height: 100vh;
+        padding: 18mm 14mm;
+        color: #2d1c12;
+        font-family: "Cinzel", serif;
+        background: #f8efd4;
+      }
+
+      .print-sheet-header {
+        text-align: center;
+        border: 2px solid #4a301d;
+        padding: 12mm 8mm 8mm;
+        margin-bottom: 10mm;
+        background: rgba(255, 248, 230, 0.65);
+      }
+
+      .print-sheet-title {
+        margin: 0;
+        font-family: "MedievalSharp", cursive;
+        font-size: 24pt;
+        color: #7b4a1d;
+      }
+
+      .print-sheet-subtitle,
+      .print-sheet-date {
+        margin: 4mm 0 0;
+        font-size: 10.5pt;
+      }
+
+      .print-grid {
+        display: block;
+      }
+
+      .print-block {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 8mm;
+        border: 1.5px solid #4a301d;
+        background: rgba(255, 248, 230, 0.78);
+      }
+
+      .print-block h2 {
+        margin: 0;
+        padding: 4mm 5mm;
+        font-size: 14pt;
+        border-bottom: 1px solid #4a301d;
+        background: rgba(123, 74, 29, 0.08);
+      }
+
+      .print-block pre {
+        margin: 0;
+        padding: 5mm;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "Cinzel", serif;
+        font-size: 10.5pt;
+        line-height: 1.55;
+      }
+    }
   </style>
 </head>
 <body>
@@ -804,6 +881,7 @@
 
           <div class="controls">
             <button class="action-btn" onclick="exportCampaignBundle()"><i class="fa-solid fa-book-open"></i> Exportar campaña completa</button>
+            <button class="action-btn secondary" onclick="printCampaignSheet()"><i class="fa-solid fa-print"></i> Modo impresión</button>
           </div>
 
           <div class="bonus-divider"></div>
@@ -898,6 +976,8 @@
       Kit autónomo en un único archivo HTML con CSS y JavaScript embebidos.
     </footer>
   </main>
+
+  <section class="print-sheet" id="printSheet" aria-hidden="true"></section>
 
   <script>
     // Datos internos del kit: no depende de servidores ni archivos externos de lógica.
@@ -1860,6 +1940,85 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+    }
+
+    function getCampaignSections() {
+      const npcText = document.getElementById("npcResult").textContent.trim();
+      const dungeonText = document.getElementById("dungeonResult").textContent.trim();
+      const questText = document.getElementById("questResult").textContent.trim();
+      const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
+      const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
+      const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
+
+      return [
+        {
+          title: "NPC principal",
+          ready: hasGeneratedContent(npcText, "npcs"),
+          text: npcText
+        },
+        {
+          title: "Mazmorra",
+          ready: hasGeneratedContent(dungeonText, "dungeons"),
+          text: dungeonText
+        },
+        {
+          title: "Misión",
+          ready: hasGeneratedContent(questText, "quests"),
+          text: questText
+        },
+        {
+          title: "Encuentro rápido",
+          ready: hasBonusEncounterContent(),
+          text: encounterText
+        },
+        {
+          title: "Rumor de taberna",
+          ready: hasBonusRumorContent(),
+          text: rumorText
+        },
+        {
+          title: "Tesoro menor",
+          ready: hasBonusTreasureContent(),
+          text: treasureText
+        }
+      ];
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // Compone una hoja de sesión limpia para impresión o PDF con el contenido generado.
+    function printCampaignSheet() {
+      const sections = getCampaignSections();
+      const readySections = sections.filter((section) => section.ready);
+
+      if (!readySections.length) {
+        alert("Generá al menos un elemento antes de usar el modo impresión.");
+        return;
+      }
+
+      const printableBlocks = readySections.map((section) => `
+        <article class="print-block">
+          <h2>${escapeHtml(section.title)}</h2>
+          <pre>${escapeHtml(section.text)}</pre>
+        </article>
+      `).join("");
+
+      const printSheet = document.getElementById("printSheet");
+      printSheet.innerHTML = `
+        <div class="print-sheet-header">
+          <h1 class="print-sheet-title">RolMaster Kit: La Forja del Dungeon Master</h1>
+          <p class="print-sheet-subtitle">Hoja de sesión lista para impresión o guardado en PDF</p>
+          <p class="print-sheet-date">Generado el ${new Date().toLocaleString("es-AR")}</p>
+        </div>
+        <div class="print-grid">${printableBlocks}</div>
+      `;
+
+      window.print();
     }
 
     function generateRumor() {
