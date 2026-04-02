@@ -823,6 +823,23 @@
             <div class="result empty" id="bonusEncounterResult"><span><i class="fa-solid fa-campground result-empty-icon"></i>La ruta todavía no trajo ningún encuentro inesperado.</span></div>
           </div>
 
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">Rumores de Taberna</h3>
+          <p class="section-desc">
+            Susurros de fogón, habladurías de mercado y secretos a media voz para encender nuevas escenas o sembrar sospechas.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateRumor()"><i class="fa-solid fa-comment-dots"></i> Generar rumor</button>
+            <button class="action-btn secondary" onclick="copyBonusRumor()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusRumor()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusRumorResult"><span><i class="fa-solid fa-mug-hot result-empty-icon"></i>La taberna aún no soltó ningún rumor interesante.</span></div>
+          </div>
+
           <div class="bonus-grid">
             <div class="resource-item">
               <div>
@@ -1035,6 +1052,42 @@
           "pasaje seguro y hospitalidad en la próxima aldea",
           "el nombre de un contacto valioso en la ciudad",
           "un cofre pequeño con joyas discretas y una llave extraña"
+        ],
+        rumorSources: [
+          "un carretero con demasiadas historias para una sola noche",
+          "una anciana que escucha más de lo que dice",
+          "un mercader arruinado aferrado a su última copa",
+          "dos cazadores discutiendo junto al hogar",
+          "una cantante que cambia versos por secretos",
+          "un novicio nervioso que no debería estar aquí",
+          "un marinero de río que jura haber visto lo imposible",
+          "un soldado retirado que odia el silencio"
+        ],
+        rumorTopics: [
+          "una cripta olvidada volvió a iluminarse por dentro",
+          "el recaudador real desapareció con los impuestos de tres aldeas",
+          "hay huellas enormes cerca del molino viejo",
+          "un noble local compra reliquias sin hacer preguntas",
+          "algo canta bajo el puente cuando cae la niebla",
+          "los cuervos evitan una colina al norte",
+          "una capilla en ruinas protege algo peor que un tesoro",
+          "varios niños sueñan con la misma puerta de piedra"
+        ],
+        rumorTwists: [
+          "quien lo contó omite que su propia familia está implicada",
+          "el rumor es cierto, pero llega con una semana de retraso",
+          "la mitad de la historia es propaganda de alguien poderoso",
+          "el supuesto monstruo protege a los inocentes del lugar",
+          "la recompensa por investigar existe, aunque nadie lo admite en público",
+          "el verdadero peligro aparece solo si alguien intenta aprovecharse"
+        ],
+        rumorVeracity: [
+          "Probablemente cierto",
+          "Cierto, pero incompleto",
+          "Exagerado por miedo",
+          "Mitad verdad, mitad superstición",
+          "Falso... aunque útil para meterse en problemas",
+          "Totalmente verdadero y peor de lo que parece"
         ]
       }
     };
@@ -1264,6 +1317,11 @@
     function hasBonusEncounterContent() {
       const text = document.getElementById("bonusEncounterResult").textContent.trim();
       return text && !text.includes("La ruta todavía no trajo");
+    }
+
+    function hasBonusRumorContent() {
+      const text = document.getElementById("bonusRumorResult").textContent.trim();
+      return text && !text.includes("La taberna aún no soltó");
     }
 
     function setResult(section, text) {
@@ -1680,6 +1738,7 @@
       const dungeonText = document.getElementById("dungeonResult").textContent.trim();
       const questText = document.getElementById("questResult").textContent.trim();
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
+      const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
 
       const sections = [
         {
@@ -1701,6 +1760,11 @@
           title: "ENCUENTRO RÁPIDO",
           ready: hasBonusEncounterContent(),
           text: encounterText
+        },
+        {
+          title: "RUMOR DE TABERNA",
+          ready: hasBonusRumorContent(),
+          text: rumorText
         }
       ];
 
@@ -1728,6 +1792,72 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "campana-completa-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateRumor() {
+      const rumor = [
+        "=== RUMOR DE TABERNA ===",
+        `Fuente: ${pick(data.bonus.rumorSources)}`,
+        `Se comenta que: ${pick(data.bonus.rumorTopics)}`,
+        `Matiz oculto: ${pick(data.bonus.rumorTwists)}`,
+        `Credibilidad: ${pick(data.bonus.rumorVeracity)}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusRumorResult");
+      target.textContent = rumor;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusRumor() {
+      const text = document.getElementById("bonusRumorResult").textContent.trim();
+
+      if (!hasBonusRumorContent()) {
+        alert("Primero generá un rumor.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Rumor copiado al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusRumor() {
+      const text = document.getElementById("bonusRumorResult").textContent.trim();
+
+      if (!hasBonusRumorContent()) {
+        alert("Primero generá un rumor.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "rumor-taberna-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
