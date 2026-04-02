@@ -175,6 +175,59 @@
       font-size: 0.98rem;
     }
 
+    .campaign-bar {
+      max-width: 660px;
+      margin: 16px auto 0;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(61, 41, 24, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 248, 231, 0.52);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .campaign-label {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #694d36;
+      font-weight: 700;
+    }
+
+    .campaign-input {
+      width: 100%;
+      border: 1px solid rgba(61, 41, 24, 0.28);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: rgba(255, 252, 243, 0.82);
+      color: var(--paper-ink);
+      font-family: "Cinzel", serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .campaign-input:focus {
+      outline: 2px solid rgba(123, 74, 29, 0.22);
+      border-color: rgba(61, 41, 24, 0.4);
+    }
+
+    .campaign-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(61, 41, 24, 0.2);
+      background: rgba(229, 199, 143, 0.46);
+      color: #5b402c;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
     .tabs {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -856,6 +909,10 @@
         flex-direction: column;
       }
 
+      .campaign-bar {
+        grid-template-columns: 1fr;
+      }
+
       .subcontrols {
         flex-direction: column;
       }
@@ -974,6 +1031,19 @@
       <p class="subtitle">
         Una estación de trabajo offline para improvisar personajes, misiones y mazmorras con aire de códice antiguo y mesa de campaña.
       </p>
+      <div class="campaign-bar">
+        <span class="campaign-label">Campaña activa</span>
+        <input
+          class="campaign-input"
+          id="campaignNameInput"
+          type="text"
+          maxlength="80"
+          value="Crónicas del Reino Fronterizo"
+          placeholder="Escribí el nombre de tu campaña"
+          oninput="handleCampaignNameInput(event)"
+        />
+        <span class="campaign-chip" id="campaignStatusChip"><i class="fa-solid fa-feather"></i> Lista para forjar</span>
+      </div>
     </header>
 
     <nav class="tabs" aria-label="Secciones del kit">
@@ -1802,6 +1872,8 @@
     };
 
     const storageKey = "rolmaster-kit-favorites-v1";
+    const defaultCampaignName = "Crónicas del Reino Fronterizo";
+    let campaignName = defaultCampaignName;
 
     function pick(list) {
       return list[Math.floor(Math.random() * list.length)];
@@ -1835,7 +1907,8 @@
       const payload = {
         npcs: forgeState.npcs.favorites,
         dungeons: forgeState.dungeons.favorites,
-        quests: forgeState.quests.favorites
+        quests: forgeState.quests.favorites,
+        campaignName
       };
       localStorage.setItem(storageKey, JSON.stringify(payload));
     }
@@ -1848,11 +1921,29 @@
         forgeState.npcs.favorites = parsed.npcs || [];
         forgeState.dungeons.favorites = parsed.dungeons || [];
         forgeState.quests.favorites = parsed.quests || [];
+        campaignName = parsed.campaignName || defaultCampaignName;
       } catch (error) {
         forgeState.npcs.favorites = [];
         forgeState.dungeons.favorites = [];
         forgeState.quests.favorites = [];
+        campaignName = defaultCampaignName;
       }
+    }
+
+    function updateCampaignUI() {
+      const input = document.getElementById("campaignNameInput");
+      const chip = document.getElementById("campaignStatusChip");
+      if (input && input.value !== campaignName) input.value = campaignName;
+      if (chip) {
+        chip.innerHTML = `<i class="fa-solid fa-feather"></i>${campaignName}`;
+      }
+    }
+
+    function handleCampaignNameInput(event) {
+      const nextValue = event.target.value.trim();
+      campaignName = nextValue || defaultCampaignName;
+      updateCampaignUI();
+      saveFavoritesToStorage();
     }
 
     function getTimestamp() {
@@ -2965,6 +3056,42 @@
       });
     }
 
+    function buildCampaignCoverSVG(title) {
+      const seed = hashText(title || defaultCampaignName);
+      const palette = {
+        bgTop: `hsl(${seed % 360} 44% 74%)`,
+        bgBottom: `hsl(${(seed >> 3) % 360} 34% 52%)`,
+        hill: `hsl(${42 + ((seed >> 5) % 26)} 30% 26%)`,
+        ridge: `hsl(${28 + ((seed >> 7) % 18)} 24% 18%)`,
+        accent: `hsl(${36 + ((seed >> 9) % 18)} 72% 60%)`,
+        ink: "rgba(42, 24, 14, 0.82)"
+      };
+
+      const banner = title || defaultCampaignName;
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-label="Portada de campaña ${escapeHtml(banner)}">
+          <defs>
+            <linearGradient id="coverSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${palette.bgTop}" />
+              <stop offset="100%" stop-color="${palette.bgBottom}" />
+            </linearGradient>
+          </defs>
+          <rect width="1200" height="560" fill="url(#coverSky)" />
+          <circle cx="938" cy="132" r="72" fill="${palette.accent}" opacity="0.84" />
+          <path d="M0 356 Q160 292 324 336 T662 324 T976 334 T1200 314 L1200 560 L0 560 Z" fill="${palette.hill}" />
+          <path d="M0 412 Q184 336 374 390 T748 374 T1200 394 L1200 560 L0 560 Z" fill="${palette.ridge}" />
+          <path d="M428 408 L532 214 L628 408 Z" fill="${palette.ink}" />
+          <path d="M592 408 L706 182 L820 408 Z" fill="${palette.ridge}" />
+          <path d="M210 430 Q342 330 476 430" fill="none" stroke="${palette.accent}" stroke-width="8" stroke-linecap="round" opacity="0.6" />
+          <path d="M714 426 Q850 320 990 426" fill="none" stroke="${palette.accent}" stroke-width="8" stroke-linecap="round" opacity="0.6" />
+          <rect x="114" y="84" width="736" height="150" rx="26" fill="rgba(255,248,231,0.72)" stroke="rgba(74,48,29,0.28)" stroke-width="3" />
+          <text x="150" y="142" fill="${palette.ink}" font-family="Georgia, serif" font-size="26" font-weight="700">RolMaster Kit presenta</text>
+          <text x="150" y="200" fill="${palette.ink}" font-family="Georgia, serif" font-size="48" font-weight="700">${escapeHtml(banner)}</text>
+          <text x="150" y="236" fill="${palette.ink}" font-family="Georgia, serif" font-size="22">Forja visual de campaña exportada desde La Forja del Dungeon Master</text>
+        </svg>
+      `;
+    }
+
     function escapeHtml(text) {
       return text
         .replace(/&/g, "&amp;")
@@ -2975,6 +3102,7 @@
     function exportCampaignHTML() {
       const sections = getCampaignSections().filter((section) => section.ready);
       const visuals = getCampaignVisuals().filter((visual) => visual.ready);
+      const coverSvg = buildCampaignCoverSVG(campaignName);
 
       if (!sections.length && !visuals.length) {
         alert("Generá al menos un elemento antes de exportar la ficha HTML.");
@@ -3032,10 +3160,24 @@
       overflow: hidden;
     }
     .sheet-header {
-      padding: 28px 22px 18px;
+      padding: 0;
       text-align: center;
       border-bottom: 2px solid rgba(74, 48, 29, 0.2);
       background: linear-gradient(180deg, rgba(123,74,29,0.1), rgba(255,255,255,0.08));
+    }
+    .sheet-cover {
+      overflow: hidden;
+      border-bottom: 2px solid rgba(74, 48, 29, 0.18);
+      background: rgba(255,248,231,0.48);
+    }
+    .sheet-cover svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 320px;
+    }
+    .sheet-headline {
+      padding: 22px 22px 18px;
     }
     .sheet-header h1 {
       margin: 0;
@@ -3118,8 +3260,11 @@
 <body>
   <main class="sheet">
     <header class="sheet-header">
-      <h1>RolMaster Kit: La Forja del Dungeon Master</h1>
-      <p>Ficha de sesión exportada el ${escapeHtml(new Date().toLocaleString("es-AR"))}</p>
+      <div class="sheet-cover">${coverSvg}</div>
+      <div class="sheet-headline">
+        <h1>${escapeHtml(campaignName)}</h1>
+        <p>Ficha de sesión exportada el ${escapeHtml(new Date().toLocaleString("es-AR"))}</p>
+      </div>
     </header>
     <section class="sheet-section">
       <h2 class="section-title">Galería Visual</h2>
@@ -3164,7 +3309,7 @@
       const printSheet = document.getElementById("printSheet");
       printSheet.innerHTML = `
         <div class="print-sheet-header">
-          <h1 class="print-sheet-title">RolMaster Kit: La Forja del Dungeon Master</h1>
+          <h1 class="print-sheet-title">${escapeHtml(campaignName)}</h1>
           <p class="print-sheet-subtitle">Hoja de sesión lista para impresión o guardado en PDF</p>
           <p class="print-sheet-date">Generado el ${new Date().toLocaleString("es-AR")}</p>
         </div>
@@ -3532,6 +3677,7 @@
     });
 
     loadFavoritesFromStorage();
+    updateCampaignUI();
     renderSection("npcs");
     renderSection("dungeons");
     renderSection("quests");
