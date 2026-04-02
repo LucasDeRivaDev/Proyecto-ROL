@@ -1272,6 +1272,23 @@
 
           <div class="bonus-divider"></div>
 
+          <h3 class="section-title" style="font-size:1.35rem;">Generador de Facciones</h3>
+          <p class="section-desc">
+            Poderes locales, órdenes secretas y grupos de interés con agenda propia para tensar la política de la campaña.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateFaction()"><i class="fa-solid fa-people-group"></i> Generar facción</button>
+            <button class="action-btn secondary" onclick="copyBonusFaction()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusFaction()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusFactionResult"><span><i class="fa-solid fa-hand-fist result-empty-icon"></i>Aún no surgió ninguna facción que mueva los hilos.</span></div>
+          </div>
+
+          <div class="bonus-divider"></div>
+
           <h3 class="section-title" style="font-size:1.35rem;">Tesoros Menores</h3>
           <p class="section-desc">
             Bolsas encontradas a toda prisa, cofres discretos, reliquias curiosas y pequeños premios ideales para encuentros secundarios.
@@ -1648,6 +1665,66 @@
           "sus archivos o reliquias guardan pistas valiosas",
           "la tensión local está a un paso de explotar en aventura"
         ],
+        factionNames: [
+          "La Mano del Umbral",
+          "Hermanas de la Ceniza Serena",
+          "Gremio del Puente de Hierro",
+          "Custodios del Velo Gris",
+          "Casa Mercante Valcor",
+          "La Cofradía del Cuerno Verde",
+          "Orden del Lirio de Bronce",
+          "Los Hijos del Vigía Caído"
+        ],
+        factionFaces: [
+          "una matriarca negociadora con sonrisa implacable",
+          "un veterano de guerra convertido en líder carismático",
+          "una priora culta que rara vez muestra enojo",
+          "un mercader elegante con demasiados favores pendientes",
+          "una capitana joven decidida a ganar prestigio",
+          "un escriba silencioso que siempre sabe más de la cuenta",
+          "una cazadora local venerada como heroína popular",
+          "un noble menor arruinado que aún conserva influencia"
+        ],
+        factionGoals: [
+          "controlar el comercio regional antes del próximo invierno",
+          "proteger un secreto antiguo enterrado en la zona",
+          "desplazar a una autoridad local corrupta",
+          "recuperar una reliquia que consideran sagrada",
+          "ganar influencia sobre la milicia o la guardia",
+          "unificar aldeas vecinas bajo su propia bandera",
+          "evitar que una fuerza sobrenatural despierte",
+          "enriquecerse aprovechando el caos creciente"
+        ],
+        factionMethods: [
+          "opera con favores, chantajes y pactos discretos",
+          "prefiere la diplomacia, pero mantiene espadas listas",
+          "usa mensajeros secretos y símbolos en lugares públicos",
+          "recluta gente desesperada con promesas de protección",
+          "compra voluntades mediante deuda o patronazgo",
+          "actúa en nombre de la fe, aunque no todos creen en su pureza",
+          "mezcla propaganda popular con golpes muy calculados",
+          "mueve piezas desde la sombra sin firmar nada"
+        ],
+        factionWeaknesses: [
+          "sufre divisiones internas entre halcones y moderados",
+          "depende demasiado de un solo líder visible",
+          "oculta un pacto vergonzoso que podría destruir su reputación",
+          "carece de recursos si el conflicto se prolonga",
+          "es vulnerable a la infiltración de rivales",
+          "su base social está cansada de promesas incumplidas",
+          "tiene enemigos dentro de la propia autoridad local",
+          "una vieja traición sigue sin resolverse entre sus miembros"
+        ],
+        factionHooks: [
+          "podría contratar aventureros para un trabajo encubierto",
+          "quiere usar al grupo como intermediario neutral",
+          "puede convertirse en aliado si se gana su confianza",
+          "hará todo lo posible por impedir que otros lleguen primero",
+          "ofrece recursos valiosos a cambio de lealtad temporal",
+          "es un polvorín político esperando una chispa",
+          "mantiene un conflicto abierto con otra facción emergente",
+          "sabe algo crucial sobre la amenaza principal de la región"
+        ],
         treasureContainers: [
           "una bolsa de cuero remendada",
           "un cofrecillo con cerradura oxidada",
@@ -1935,6 +2012,11 @@
     function hasBonusSettlementContent() {
       const text = document.getElementById("bonusSettlementResult").textContent.trim();
       return text && !text.includes("Aún no se levantó ningún asentamiento");
+    }
+
+    function hasBonusFactionContent() {
+      const text = document.getElementById("bonusFactionResult").textContent.trim();
+      return text && !text.includes("Aún no surgió ninguna facción");
     }
 
     function hasBonusTreasureContent() {
@@ -2718,6 +2800,7 @@
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
       const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
       const settlementText = document.getElementById("bonusSettlementResult").textContent.trim();
+      const factionText = document.getElementById("bonusFactionResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       const sections = [
@@ -2755,6 +2838,11 @@
           title: "ASENTAMIENTO",
           ready: hasBonusSettlementContent(),
           text: settlementText
+        },
+        {
+          title: "FACCIÓN",
+          ready: hasBonusFactionContent(),
+          text: factionText
         },
         {
           title: "TESORO MENOR",
@@ -2801,6 +2889,7 @@
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
       const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
       const settlementText = document.getElementById("bonusSettlementResult").textContent.trim();
+      const factionText = document.getElementById("bonusFactionResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       return [
@@ -2838,6 +2927,11 @@
           title: "Asentamiento",
           ready: hasBonusSettlementContent(),
           text: settlementText
+        },
+        {
+          title: "Facción",
+          ready: hasBonusFactionContent(),
+          text: factionText
         },
         {
           title: "Tesoro menor",
@@ -3079,6 +3173,74 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "asentamiento-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateFaction() {
+      const faction = [
+        "=== FACCIÓN ===",
+        `Nombre: ${pick(data.bonus.factionNames)}`,
+        `Figura visible: ${pick(data.bonus.factionFaces)}`,
+        `Objetivo: ${pick(data.bonus.factionGoals)}`,
+        `Métodos: ${pick(data.bonus.factionMethods)}`,
+        `Debilidad: ${pick(data.bonus.factionWeaknesses)}`,
+        `Gancho: ${pick(data.bonus.factionHooks)}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusFactionResult");
+      target.textContent = faction;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusFaction() {
+      const text = document.getElementById("bonusFactionResult").textContent.trim();
+
+      if (!hasBonusFactionContent()) {
+        alert("Primero generá una facción.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Facción copiada al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusFaction() {
+      const text = document.getElementById("bonusFactionResult").textContent.trim();
+
+      if (!hasBonusFactionContent()) {
+        alert("Primero generá una facción.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "faccion-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
