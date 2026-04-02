@@ -198,6 +198,8 @@
     }
 
     .campaign-input {
+      position: relative;
+      z-index: 1;
       width: 100%;
       border: 1px solid rgba(61, 41, 24, 0.28);
       border-radius: 10px;
@@ -258,6 +260,7 @@
       background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.35) 40%, transparent 60%);
       transform: translateX(-120%);
       transition: transform 0.55s ease;
+      pointer-events: none;
     }
 
     .tab-btn:hover::before,
@@ -390,6 +393,8 @@
     }
 
     .action-btn {
+      position: relative;
+      z-index: 1;
       border: 2px solid var(--border);
       border-radius: 12px;
       padding: 10px 15px;
@@ -420,6 +425,8 @@
     }
 
     .mini-btn {
+      position: relative;
+      z-index: 1;
       border: 1px solid rgba(61, 41, 24, 0.32);
       border-radius: 999px;
       padding: 7px 11px;
