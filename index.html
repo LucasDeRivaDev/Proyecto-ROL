@@ -729,6 +729,63 @@
       gap: 12px;
     }
 
+    .visual-gallery {
+      display: grid;
+      gap: 12px;
+    }
+
+    .visual-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .visual-card {
+      padding: 12px;
+      border-radius: 14px;
+      border: 2px solid rgba(61, 41, 24, 0.20);
+      background: linear-gradient(180deg, rgba(255, 247, 229, 0.72), rgba(225, 193, 133, 0.22));
+      box-shadow: 0 8px 14px rgba(40, 21, 10, 0.08);
+    }
+
+    .visual-card-title {
+      margin: 0 0 8px;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .visual-preview {
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(61, 41, 24, 0.26);
+      background: rgba(255, 250, 236, 0.62);
+      overflow: hidden;
+    }
+
+    .visual-preview svg {
+      width: 100%;
+      height: auto;
+      max-height: 180px;
+      display: block;
+    }
+
+    .visual-preview.empty {
+      color: #755b45;
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .visual-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
     .resource-item {
       display: flex;
       justify-content: space-between;
@@ -770,6 +827,10 @@
     @media (max-width: 720px) {
       .tabs {
         grid-template-columns: 1fr 1fr;
+      }
+
+      .visual-gallery-grid {
+        grid-template-columns: 1fr;
       }
 
       .resource-item {
@@ -1099,6 +1160,46 @@
           <div class="controls">
             <button class="action-btn" onclick="exportCampaignBundle()"><i class="fa-solid fa-book-open"></i> Exportar campaña completa</button>
             <button class="action-btn secondary" onclick="printCampaignSheet()"><i class="fa-solid fa-print"></i> Modo impresión</button>
+          </div>
+
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">Galería Visual de Campaña</h3>
+          <p class="section-desc">
+            Reuní en un solo panel el retrato del NPC, el minimapa de la mazmorra y la escena de misión para revisar la identidad visual actual de la sesión.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="refreshVisualGallery()"><i class="fa-solid fa-images"></i> Actualizar galería</button>
+            <button class="action-btn secondary" onclick="exportAllVisuals()"><i class="fa-solid fa-file-export"></i> Exportar 3 SVG</button>
+          </div>
+
+          <div class="visual-gallery">
+            <div class="visual-gallery-grid">
+              <div class="visual-card">
+                <p class="visual-card-title"><i class="fa-solid fa-user-shield"></i> Retrato del NPC</p>
+                <div class="visual-preview empty" id="galleryNpcPreview">Generá un NPC para mostrar su retrato.</div>
+                <div class="visual-card-actions">
+                  <button class="mini-btn" onclick="exportVisualSVG('npcPortrait', 'npc-retrato-rolmaster-kit.svg', 'Primero generá un NPC para exportar su retrato.')">Exportar SVG</button>
+                </div>
+              </div>
+
+              <div class="visual-card">
+                <p class="visual-card-title"><i class="fa-solid fa-map"></i> Mapa de Mazmorra</p>
+                <div class="visual-preview empty" id="galleryDungeonPreview">Generá una mazmorra para mostrar su mapa.</div>
+                <div class="visual-card-actions">
+                  <button class="mini-btn" onclick="exportVisualSVG('dungeonMap', 'mazmorra-mapa-rolmaster-kit.svg', 'Primero generá una mazmorra para exportar su mapa.')">Exportar SVG</button>
+                </div>
+              </div>
+
+              <div class="visual-card">
+                <p class="visual-card-title"><i class="fa-solid fa-mountain-sun"></i> Escena de Misión</p>
+                <div class="visual-preview empty" id="galleryQuestPreview">Generá una misión para mostrar su escena.</div>
+                <div class="visual-card-actions">
+                  <button class="mini-btn" onclick="exportVisualSVG('questScene', 'mision-escena-rolmaster-kit.svg', 'Primero generá una misión para exportar su escena.')">Exportar SVG</button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="bonus-divider"></div>
@@ -2233,6 +2334,7 @@
       if (section === "npcs") renderNPCPortrait();
       if (section === "dungeons") renderDungeonMap();
       if (section === "quests") renderQuestScene();
+      refreshVisualGallery();
     }
 
     function commitEntry(section, entry, options = {}) {
@@ -2463,6 +2565,59 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+    }
+
+    function syncGalleryPreview(sourceId, targetId, emptyText) {
+      const source = document.getElementById(sourceId);
+      const target = document.getElementById(targetId);
+      const svg = source.querySelector("svg");
+
+      if (!svg) {
+        target.classList.add("empty");
+        target.textContent = emptyText;
+        return;
+      }
+
+      target.classList.remove("empty");
+      target.innerHTML = svg.outerHTML;
+    }
+
+    function refreshVisualGallery() {
+      syncGalleryPreview("npcPortrait", "galleryNpcPreview", "Generá un NPC para mostrar su retrato.");
+      syncGalleryPreview("dungeonMap", "galleryDungeonPreview", "Generá una mazmorra para mostrar su mapa.");
+      syncGalleryPreview("questScene", "galleryQuestPreview", "Generá una misión para mostrar su escena.");
+    }
+
+    function exportAllVisuals() {
+      const exports = [
+        {
+          id: "npcPortrait",
+          file: "npc-retrato-rolmaster-kit.svg",
+          empty: "Primero generá un NPC para exportar su retrato."
+        },
+        {
+          id: "dungeonMap",
+          file: "mazmorra-mapa-rolmaster-kit.svg",
+          empty: "Primero generá una mazmorra para exportar su mapa."
+        },
+        {
+          id: "questScene",
+          file: "mision-escena-rolmaster-kit.svg",
+          empty: "Primero generá una misión para exportar su escena."
+        }
+      ];
+
+      const available = exports.filter((item) => document.getElementById(item.id).querySelector("svg"));
+      if (!available.length) {
+        alert("Generá al menos un visual antes de exportar la galería.");
+        return;
+      }
+
+      available.forEach((item, index) => {
+        window.setTimeout(() => {
+          exportVisualSVG(item.id, item.file, item.empty);
+        }, index * 120);
+      });
     }
 
     // Exporta un archivo .txt legible con el contenido generado.
