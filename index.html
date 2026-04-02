@@ -840,6 +840,23 @@
             <div class="result empty" id="bonusRumorResult"><span><i class="fa-solid fa-mug-hot result-empty-icon"></i>La taberna aún no soltó ningún rumor interesante.</span></div>
           </div>
 
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">Tesoros Menores</h3>
+          <p class="section-desc">
+            Bolsas encontradas a toda prisa, cofres discretos, reliquias curiosas y pequeños premios ideales para encuentros secundarios.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateMinorTreasure()"><i class="fa-solid fa-gem"></i> Generar tesoro</button>
+            <button class="action-btn secondary" onclick="copyBonusTreasure()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusTreasure()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusTreasureResult"><span><i class="fa-solid fa-coins result-empty-icon"></i>Aún no apareció ningún tesoro menor digno de anotarse.</span></div>
+          </div>
+
           <div class="bonus-grid">
             <div class="resource-item">
               <div>
@@ -1088,6 +1105,42 @@
           "Mitad verdad, mitad superstición",
           "Falso... aunque útil para meterse en problemas",
           "Totalmente verdadero y peor de lo que parece"
+        ],
+        treasureContainers: [
+          "una bolsa de cuero remendada",
+          "un cofrecillo con cerradura oxidada",
+          "un relicario de plata ennegrecida",
+          "una caja de madera tallada con runas simples",
+          "una faja oculta en un forro de capa",
+          "un tubo de hueso sellado con cera",
+          "una vasija pequeña envuelta en lino",
+          "un paquete embarrado escondido bajo piedras sueltas"
+        ],
+        treasureValues: [
+          "12 monedas de plata y 8 de cobre",
+          "27 monedas de plata",
+          "1d20 monedas de oro y un puñado de plata",
+          "45 monedas de cobre de acuñación antigua",
+          "18 monedas de oro de origen noble",
+          "una mezcla de 9 monedas de oro, 14 de plata y 30 de cobre"
+        ],
+        treasureCurios: [
+          "un broche con el emblema de una casa desaparecida",
+          "una sortija sin piedra con inscripción interior",
+          "un dado de hueso cargado por magia menor",
+          "una llave negra que no corresponde a ninguna cerradura común",
+          "un amuleto de latón con olor a incienso viejo",
+          "una miniatura de santo tallada en marfil",
+          "un mapa incompleto manchado por vino",
+          "una carta sellada que nunca llegó a destino"
+        ],
+        treasureHooks: [
+          "Podría incriminar a alguien poderoso si se muestra en público.",
+          "Vale poco en oro, pero mucho para la persona adecuada.",
+          "Parece corriente hasta que se observa bajo luz de luna.",
+          "Tiene un origen sospechoso que puede traer problemas.",
+          "Incluye una pista discreta hacia otro botín mayor.",
+          "Quien lo perdió probablemente lo está buscando todavía."
         ]
       }
     };
@@ -1322,6 +1375,11 @@
     function hasBonusRumorContent() {
       const text = document.getElementById("bonusRumorResult").textContent.trim();
       return text && !text.includes("La taberna aún no soltó");
+    }
+
+    function hasBonusTreasureContent() {
+      const text = document.getElementById("bonusTreasureResult").textContent.trim();
+      return text && !text.includes("Aún no apareció ningún tesoro menor");
     }
 
     function setResult(section, text) {
@@ -1739,6 +1797,7 @@
       const questText = document.getElementById("questResult").textContent.trim();
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
+      const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       const sections = [
         {
@@ -1765,6 +1824,11 @@
           title: "RUMOR DE TABERNA",
           ready: hasBonusRumorContent(),
           text: rumorText
+        },
+        {
+          title: "TESORO MENOR",
+          ready: hasBonusTreasureContent(),
+          text: treasureText
         }
       ];
 
@@ -1858,6 +1922,74 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "rumor-taberna-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateMinorTreasure() {
+      const goldRoll = roll(20);
+      const valueText = pick(data.bonus.treasureValues).replace("1d20", `${goldRoll}`);
+      const treasure = [
+        "=== TESORO MENOR ===",
+        `Contenedor: ${pick(data.bonus.treasureContainers)}`,
+        `Valor inmediato: ${valueText}`,
+        `Curiosidad: ${pick(data.bonus.treasureCurios)}`,
+        `Gancho adicional: ${pick(data.bonus.treasureHooks)}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusTreasureResult");
+      target.textContent = treasure;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusTreasure() {
+      const text = document.getElementById("bonusTreasureResult").textContent.trim();
+
+      if (!hasBonusTreasureContent()) {
+        alert("Primero generá un tesoro.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Tesoro copiado al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusTreasure() {
+      const text = document.getElementById("bonusTreasureResult").textContent.trim();
+
+      if (!hasBonusTreasureContent()) {
+        alert("Primero generá un tesoro.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tesoro-menor-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
