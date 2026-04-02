@@ -937,6 +937,23 @@
 
           <div class="bonus-divider"></div>
 
+          <h3 class="section-title" style="font-size:1.35rem;">Generador de Asentamientos</h3>
+          <p class="section-desc">
+            Aldeas, villas y puestos fronterizos con identidad propia, tensión local y un detalle suficiente para improvisar escenas enseguida.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateSettlement()"><i class="fa-solid fa-house-chimney"></i> Generar asentamiento</button>
+            <button class="action-btn secondary" onclick="copyBonusSettlement()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusSettlement()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusSettlementResult"><span><i class="fa-solid fa-tower-observation result-empty-icon"></i>Aún no se levantó ningún asentamiento digno del mapa.</span></div>
+          </div>
+
+          <div class="bonus-divider"></div>
+
           <h3 class="section-title" style="font-size:1.35rem;">Tesoros Menores</h3>
           <p class="section-desc">
             Bolsas encontradas a toda prisa, cofres discretos, reliquias curiosas y pequeños premios ideales para encuentros secundarios.
@@ -1253,6 +1270,66 @@
           "la guardia vigila el lugar por razones que el dueño niega",
           "hay una puerta cerrada cuyo cerrojo se abre desde dentro"
         ],
+        settlementNames: [
+          "Vallebruma",
+          "Risco del Fresno",
+          "Puente de Sal",
+          "Santa Lumbre",
+          "Loma del Cuervo",
+          "Robledal Viejo",
+          "Puerto Ceniza",
+          "Arroyo del Juramento"
+        ],
+        settlementTypes: [
+          "aldea agrícola rodeada de campos agotados",
+          "villa amurallada levantada sobre ruinas antiguas",
+          "puesto fronterizo castigado por el clima y las deudas",
+          "pueblo maderero junto a un bosque demasiado silencioso",
+          "comunidad minera que vive pendiente del próximo derrumbe",
+          "cruce comercial pequeño pero sorprendentemente rico",
+          "caserío de peregrinos alrededor de un santuario menor",
+          "asentamiento pesquero que teme navegar de noche"
+        ],
+        settlementLandmarks: [
+          "una torre de vigilancia abandonada que aún domina el horizonte",
+          "un molino inclinado que nunca deja de girar",
+          "un pozo comunal cubierto de cintas y ofrendas",
+          "una vieja muralla rota usada ahora como mercado",
+          "un santuario de piedra negra custodiado por vecinos devotos",
+          "un puente de madera rehecho demasiadas veces",
+          "unas termas humeantes consideradas milagrosas",
+          "un roble inmenso donde se anuncian leyes y castigos"
+        ],
+        settlementLeaders: [
+          "un alcalde cansado que oculta más de lo que firma",
+          "una capitana de milicia respetada pero temida",
+          "una abadesa pragmática con influencia sobre todos",
+          "un consejo de ancianos dividido en dos facciones",
+          "un recaudador enviado por la corona que nadie eligió",
+          "una heredera joven obligada a gobernar demasiado pronto",
+          "un veterano de guerra que mantiene el orden a puro prestigio",
+          "una curandera cuya palabra pesa más que la ley escrita"
+        ],
+        settlementProblems: [
+          "la cosecha falló y comienzan a desaparecer provisiones",
+          "cada semana alguien jura ver luces en las afueras",
+          "una banda exige tributo a cambio de falsa protección",
+          "los muertos del cementerio no descansan bien desde el último invierno",
+          "la guardia local está comprada por intereses externos",
+          "un conflicto por el agua divide familias enteras",
+          "un niño del lugar encontró algo que no debía",
+          "las caravanas dejaron de llegar sin explicación clara"
+        ],
+        settlementOpportunities: [
+          "sus habitantes pagarían bien por ayuda discreta",
+          "es un punto ideal para sembrar rumores y contactos",
+          "oculta acceso a una ruina o paso olvidado",
+          "puede convertirse en base segura si se resuelve su crisis",
+          "sus festividades atraen visitantes y problemas por igual",
+          "alguien importante planea pasar por aquí en secreto",
+          "sus archivos o reliquias guardan pistas valiosas",
+          "la tensión local está a un paso de explotar en aventura"
+        ],
         treasureContainers: [
           "una bolsa de cuero remendada",
           "un cofrecillo con cerradura oxidada",
@@ -1527,6 +1604,11 @@
     function hasBonusTavernContent() {
       const text = document.getElementById("bonusTavernResult").textContent.trim();
       return text && !text.includes("Todavía no se alzó ninguna taberna");
+    }
+
+    function hasBonusSettlementContent() {
+      const text = document.getElementById("bonusSettlementResult").textContent.trim();
+      return text && !text.includes("Aún no se levantó ningún asentamiento");
     }
 
     function hasBonusTreasureContent() {
@@ -1950,6 +2032,7 @@
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
       const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
+      const settlementText = document.getElementById("bonusSettlementResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       const sections = [
@@ -1982,6 +2065,11 @@
           title: "TABERNA",
           ready: hasBonusTavernContent(),
           text: tavernText
+        },
+        {
+          title: "ASENTAMIENTO",
+          ready: hasBonusSettlementContent(),
+          text: settlementText
         },
         {
           title: "TESORO MENOR",
@@ -2027,6 +2115,7 @@
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
       const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
+      const settlementText = document.getElementById("bonusSettlementResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       return [
@@ -2059,6 +2148,11 @@
           title: "Taberna",
           ready: hasBonusTavernContent(),
           text: tavernText
+        },
+        {
+          title: "Asentamiento",
+          ready: hasBonusSettlementContent(),
+          text: settlementText
         },
         {
           title: "Tesoro menor",
@@ -2232,6 +2326,74 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "taberna-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateSettlement() {
+      const settlement = [
+        "=== ASENTAMIENTO ===",
+        `Nombre: ${pick(data.bonus.settlementNames)}`,
+        `Tipo: ${pick(data.bonus.settlementTypes)}`,
+        `Lugar distintivo: ${pick(data.bonus.settlementLandmarks)}`,
+        `Quién manda aquí: ${pick(data.bonus.settlementLeaders)}`,
+        `Problema local: ${pick(data.bonus.settlementProblems)}`,
+        `Oportunidad para la aventura: ${pick(data.bonus.settlementOpportunities)}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusSettlementResult");
+      target.textContent = settlement;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusSettlement() {
+      const text = document.getElementById("bonusSettlementResult").textContent.trim();
+
+      if (!hasBonusSettlementContent()) {
+        alert("Primero generá un asentamiento.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Asentamiento copiado al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusSettlement() {
+      const text = document.getElementById("bonusSettlementResult").textContent.trim();
+
+      if (!hasBonusSettlementContent()) {
+        alert("Primero generá un asentamiento.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "asentamiento-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
