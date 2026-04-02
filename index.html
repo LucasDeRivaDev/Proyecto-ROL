@@ -920,6 +920,23 @@
 
           <div class="bonus-divider"></div>
 
+          <h3 class="section-title" style="font-size:1.35rem;">Generador de Tabernas</h3>
+          <p class="section-desc">
+            Posadas con personalidad, clientela, platos memorables y pequeños problemas listos para convertirse en escena.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateTavern()"><i class="fa-solid fa-beer-mug-empty"></i> Generar taberna</button>
+            <button class="action-btn secondary" onclick="copyBonusTavern()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusTavern()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusTavernResult"><span><i class="fa-solid fa-utensils result-empty-icon"></i>Todavía no se alzó ninguna taberna en el camino.</span></div>
+          </div>
+
+          <div class="bonus-divider"></div>
+
           <h3 class="section-title" style="font-size:1.35rem;">Tesoros Menores</h3>
           <p class="section-desc">
             Bolsas encontradas a toda prisa, cofres discretos, reliquias curiosas y pequeños premios ideales para encuentros secundarios.
@@ -1185,6 +1202,56 @@
           "Mitad verdad, mitad superstición",
           "Falso... aunque útil para meterse en problemas",
           "Totalmente verdadero y peor de lo que parece"
+        ],
+        tavernNames: [
+          "El Jabalí Dorado",
+          "La Corona Astillada",
+          "El Caldero del Cuervo",
+          "La Linterna del Vado",
+          "Las Tres Jarras",
+          "El Ciervo Somnoliento",
+          "La Espuela de Bronce",
+          "El Barril Cantor"
+        ],
+        tavernTraits: [
+          "siempre huele a pan negro recién hecho y humo de turba",
+          "sus mesas están cubiertas de marcas de cuchillo y viejas apuestas",
+          "la clientela habla en susurros incluso cuando nadie escucha",
+          "un músico cansado toca laúd desafinado junto al hogar",
+          "cada pared está llena de trofeos de caza y recuerdos de guerra",
+          "la cocina nunca descansa y el vapor empaña todas las ventanas",
+          "la sala común parece acogedora, pero todos miden a los recién llegados",
+          "hay un reservado al fondo que nadie usa sin permiso"
+        ],
+        tavernSpecialties: [
+          "estofado espeso con cerveza negra y raíz de nabo",
+          "sidra caliente con miel especiada",
+          "trucha ahumada servida con pan de centeno",
+          "licor herbal tan fuerte que hace llorar a veteranos",
+          "pastel de carne con salsa de cebolla tostada",
+          "vino agrio pero sorprendentemente popular entre mercenarios",
+          "queso curado con hierbas de montaña",
+          "una sopa roja picante cuya receta nadie revela"
+        ],
+        tavernKeepers: [
+          "una ex aventurera manca que ya vio demasiadas peleas",
+          "un viudo cordial que recuerda el nombre de todo viajero",
+          "dos hermanas gemelas que terminan las frases de la otra",
+          "una enana práctica que cobra por adelantado y sin discusión",
+          "un semielfo impecable que sonríe demasiado poco",
+          "una anciana curtida que guarda un garrote bajo la barra",
+          "un cocinero corpulento que manda más que el dueño",
+          "una joven heredera intentando salvar el negocio familiar"
+        ],
+        tavernComplications: [
+          "un cobrador local viene esta noche a exigir una deuda injusta",
+          "alguien usa el sótano para esconder mercancía prohibida",
+          "un huésped desapareció y nadie quiere hablar demasiado del tema",
+          "una partida de cartas puede terminar en duelo si alguien interviene",
+          "la taberna recibe mensajes secretos marcados en barriles",
+          "un noble viaja de incógnito entre la clientela habitual",
+          "la guardia vigila el lugar por razones que el dueño niega",
+          "hay una puerta cerrada cuyo cerrojo se abre desde dentro"
         ],
         treasureContainers: [
           "una bolsa de cuero remendada",
@@ -1455,6 +1522,11 @@
     function hasBonusRumorContent() {
       const text = document.getElementById("bonusRumorResult").textContent.trim();
       return text && !text.includes("La taberna aún no soltó");
+    }
+
+    function hasBonusTavernContent() {
+      const text = document.getElementById("bonusTavernResult").textContent.trim();
+      return text && !text.includes("Todavía no se alzó ninguna taberna");
     }
 
     function hasBonusTreasureContent() {
@@ -1877,6 +1949,7 @@
       const questText = document.getElementById("questResult").textContent.trim();
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
+      const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       const sections = [
@@ -1904,6 +1977,11 @@
           title: "RUMOR DE TABERNA",
           ready: hasBonusRumorContent(),
           text: rumorText
+        },
+        {
+          title: "TABERNA",
+          ready: hasBonusTavernContent(),
+          text: tavernText
         },
         {
           title: "TESORO MENOR",
@@ -1948,6 +2026,7 @@
       const questText = document.getElementById("questResult").textContent.trim();
       const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
       const rumorText = document.getElementById("bonusRumorResult").textContent.trim();
+      const tavernText = document.getElementById("bonusTavernResult").textContent.trim();
       const treasureText = document.getElementById("bonusTreasureResult").textContent.trim();
 
       return [
@@ -1975,6 +2054,11 @@
           title: "Rumor de taberna",
           ready: hasBonusRumorContent(),
           text: rumorText
+        },
+        {
+          title: "Taberna",
+          ready: hasBonusTavernContent(),
+          text: tavernText
         },
         {
           title: "Tesoro menor",
@@ -2081,6 +2165,73 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "rumor-taberna-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateTavern() {
+      const tavern = [
+        "=== TABERNA ===",
+        `Nombre: ${pick(data.bonus.tavernNames)}`,
+        `Ambiente: ${pick(data.bonus.tavernTraits)}`,
+        `Especialidad: ${pick(data.bonus.tavernSpecialties)}`,
+        `Al mando: ${pick(data.bonus.tavernKeepers)}`,
+        `Complicación: ${pick(data.bonus.tavernComplications)}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusTavernResult");
+      target.textContent = tavern;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusTavern() {
+      const text = document.getElementById("bonusTavernResult").textContent.trim();
+
+      if (!hasBonusTavernContent()) {
+        alert("Primero generá una taberna.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Taberna copiada al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusTavern() {
+      const text = document.getElementById("bonusTavernResult").textContent.trim();
+
+      if (!hasBonusTavernContent()) {
+        alert("Primero generá una taberna.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "taberna-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
