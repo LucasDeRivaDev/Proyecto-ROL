@@ -3135,14 +3135,7 @@
             </article>
           `).join("")
         : '<p class="sheet-empty">No hay bloques de texto generados en esta sesión.</p>';
-
-      const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RolMaster Kit - Ficha de Sesión</title>
-  <style>
+      const styleBlock = `
     :root {
       --paper: #f4e4bc;
       --paper-soft: #f8efd4;
@@ -3263,29 +3256,40 @@
       .sheet-content-grid {
         grid-template-columns: 1fr;
       }
-    }
-  </style>
-</head>
-<body>
-  <main class="sheet">
-    <header class="sheet-header">
-      <div class="sheet-cover">${coverSvg}</div>
-      <div class="sheet-headline">
-        <h1>${escapeHtml(campaignName)}</h1>
-        <p>Ficha de sesión exportada el ${escapeHtml(new Date().toLocaleString("es-AR"))}</p>
-      </div>
-    </header>
-    <section class="sheet-section">
-      <h2 class="section-title">Galería Visual</h2>
-      <div class="sheet-visual-grid">${visualCards}</div>
-    </section>
-    <section class="sheet-section">
-      <h2 class="section-title">Contenido de Campaña</h2>
-      <div class="sheet-content-grid">${contentBlocks}</div>
-    </section>
-  </main>
-</body>
-</html>`;
+    }`;
+
+      const html = [
+        "<!DOCTYPE html>",
+        '<html lang="es">',
+        "<head>",
+        '  <meta charset="UTF-8" />',
+        '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
+        "  <title>RolMaster Kit - Ficha de Sesión</title>",
+        "  <" + "style>",
+        styleBlock,
+        "  <" + "/style>",
+        "</head>",
+        "<body>",
+        '  <main class="sheet">',
+        '    <header class="sheet-header">',
+        `      <div class="sheet-cover">${coverSvg}</div>`,
+        '      <div class="sheet-headline">',
+        `        <h1>${escapeHtml(campaignName)}</h1>`,
+        `        <p>Ficha de sesión exportada el ${escapeHtml(new Date().toLocaleString("es-AR"))}</p>`,
+        "      </div>",
+        "    </header>",
+        '    <section class="sheet-section">',
+        '      <h2 class="section-title">Galería Visual</h2>',
+        `      <div class="sheet-visual-grid">${visualCards}</div>`,
+        "    </section>",
+        '    <section class="sheet-section">',
+        '      <h2 class="section-title">Contenido de Campaña</h2>',
+        `      <div class="sheet-content-grid">${contentBlocks}</div>`,
+        "    </section>",
+        "  </main>",
+        "</body>",
+        "</html>"
+      ].join("\n");
 
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
       const url = URL.createObjectURL(blob);
