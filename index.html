@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RolMaster Kit: La Forja del Dungeon Master</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=MedievalSharp&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --parchment: #f4e4bc;
+      --parchment-dark: #dcc088;
+      --paper: #f0ddb0;
+      --paper-ink: #352215;
+      --border: #3d2918;
+      --border-soft: rgba(61, 41, 24, 0.35);
+      --accent: #7b4a1d;
+      --accent-strong: #5a3010;
+      --gold: #b98a3d;
+      --shadow: rgba(40, 21, 10, 0.28);
+      --shadow-soft: rgba(40, 21, 10, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--paper-ink);
+      font-family: "Cinzel", serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 247, 224, 0.7), transparent 18%),
+        radial-gradient(circle at 80% 16%, rgba(120, 74, 29, 0.15), transparent 16%),
+        radial-gradient(circle at 50% 120%, rgba(88, 52, 24, 0.18), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
+        var(--parchment);
+      position: relative;
+      overflow-x: hidden;
+      padding: 24px 14px 40px;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(120, 74, 29, 0.025) 0,
+          rgba(120, 74, 29, 0.025) 2px,
+          transparent 2px,
+          transparent 9px
+        );
+      mix-blend-mode: multiply;
+      opacity: 0.6;
+    }
+
+    body::after {
+      background: radial-gradient(circle at center, transparent 55%, rgba(50, 28, 12, 0.22) 100%);
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      border: 3px solid var(--border);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(74, 45, 20, 0.05)),
+        linear-gradient(135deg, rgba(255,255,255,0.1), transparent 45%),
+        var(--parchment);
+      box-shadow:
+        0 22px 44px var(--shadow),
+        inset 0 1px 0 rgba(255,255,255,0.45);
+      overflow: hidden;
+    }
+
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    .shell::before {
+      border: 1px solid rgba(61, 41, 24, 0.25);
+    }
+
+    .shell::after {
+      inset: 19px;
+      border: 1px dashed rgba(61, 41, 24, 0.13);
+    }
+
+    .hero {
+      position: relative;
+      padding: 34px 20px 24px;
+      text-align: center;
+      border-bottom: 2px solid rgba(61, 41, 24, 0.18);
+      background:
+        radial-gradient(circle at top center, rgba(255, 242, 214, 0.55), transparent 42%),
+        linear-gradient(180deg, rgba(123, 74, 29, 0.10), rgba(255,255,255,0.03));
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 36px;
+      background: radial-gradient(circle, rgba(61, 41, 24, 0.18), transparent 70%);
+      filter: blur(9px);
+      pointer-events: none;
+    }
+
+    .crest {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 74px;
+      height: 74px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(61, 41, 24, 0.5);
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4), transparent 30%),
+        linear-gradient(180deg, #d4b06d, #8f612d);
+      box-shadow:
+        0 10px 18px var(--shadow-soft),
+        inset 0 1px 0 rgba(255,255,255,0.45);
+      color: #2f1b0d;
+      font-size: 1.8rem;
+      animation: pulseCrest 4.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseCrest {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "MedievalSharp", cursive;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.05;
+      color: var(--accent);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .subtitle {
+      max-width: 620px;
+      margin: 10px auto 0;
+      color: #634b38;
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 18px 16px 8px;
+    }
+
+    .tab-btn {
+      position: relative;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 10px;
+      font-family: "Cinzel", serif;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--paper-ink);
+      cursor: pointer;
+      background: linear-gradient(180deg, #f7ebc8, #e1c185);
+      box-shadow: 0 8px 14px var(--shadow-soft);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+      overflow: hidden;
+    }
+
+    .tab-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.35) 40%, transparent 60%);
+      transform: translateX(-120%);
+      transition: transform 0.55s ease;
+    }
+
+    .tab-btn:hover::before,
+    .tab-btn:focus-visible::before {
+      transform: translateX(120%);
+    }
+
+    .tab-btn:hover,
+    .tab-btn:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 18px var(--shadow-soft);
+      filter: brightness(1.02);
+      outline: none;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(180deg, #dcb16a, #ba7d38);
+      color: #23150c;
+    }
+
+    .tab-btn i {
+      margin-right: 7px;
+    }
+
+    .content {
+      padding: 18px 16px 26px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: reveal 0.35s ease;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .card {
+      position: relative;
+      margin-bottom: 18px;
+      padding: 22px;
+      border-radius: 18px;
+      border: 2px solid rgba(61, 41, 24, 0.42);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.26), rgba(94, 61, 29, 0.05)),
+        radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 24%),
+        var(--paper);
+      box-shadow:
+        0 14px 24px var(--shadow-soft),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+      overflow: hidden;
+    }
+
+    .card:nth-of-type(odd) {
+      transform: rotate(-0.45deg);
+    }
+
+    .card:nth-of-type(even) {
+      transform: rotate(0.45deg);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(255,255,255,0.25), transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(98, 62, 33, 0.09), transparent 25%);
+      pointer-events: none;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(61, 41, 24, 0.12);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .section-kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(61, 41, 24, 0.22);
+      background: rgba(255, 248, 231, 0.55);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-family: "MedievalSharp", cursive;
+      font-size: 1.75rem;
+      color: var(--accent);
+    }
+
+    .section-desc {
+      margin: 0 0 18px;
+      color: #664d37;
+      line-height: 1.6;
+      font-size: 0.96rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .subcontrols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -2px 0 18px;
+    }
+
+    .action-btn {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 15px;
+      color: #fbf0d5;
+      cursor: pointer;
+      font-family: "Cinzel", serif;
+      font-weight: 700;
+      background: linear-gradient(180deg, #815226, #5a3418);
+      box-shadow: 0 8px 14px var(--shadow-soft);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+
+    .action-btn.secondary {
+      color: #2f1d12;
+      background: linear-gradient(180deg, #e5c78f, #c49353);
+    }
+
+    .action-btn:hover,
+    .action-btn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 16px var(--shadow-soft);
+      filter: brightness(1.03);
+      outline: none;
+    }
+
+    .action-btn i {
+      margin-right: 7px;
+    }
+
+    .mini-btn {
+      border: 1px solid rgba(61, 41, 24, 0.32);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: rgba(255, 248, 231, 0.62);
+      color: var(--accent-strong);
+      cursor: pointer;
+      font-family: "Cinzel", serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .mini-btn:hover,
+    .mini-btn:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(229, 199, 143, 0.85);
+      outline: none;
+    }
+
+    .pin-btn.active {
+      background: linear-gradient(180deg, #dcb16a, #b57b33);
+      color: #2b190d;
+      border-color: rgba(61, 41, 24, 0.55);
+    }
+
+    .result-frame {
+      position: relative;
+      min-height: 230px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 2px dashed rgba(61, 41, 24, 0.35);
+      background: linear-gradient(180deg, rgba(255,250,236,0.72), rgba(227, 202, 149, 0.35));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .result-frame::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(61, 41, 24, 0.11);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .result {
+      position: relative;
+      z-index: 1;
+      min-height: 190px;
+      white-space: pre-line;
+      line-height: 1.75;
+      font-size: 1rem;
+      text-wrap: pretty;
+    }
+
+    .result.empty {
+      display: grid;
+      place-items: center;
+      color: #6f5844;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .result-empty-icon {
+      display: block;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(61, 41, 24, 0.24);
+      background: rgba(255, 248, 231, 0.7);
+      color: #62462f;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .utility-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .utility-panel {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(61, 41, 24, 0.18);
+      background: rgba(255, 248, 231, 0.48);
+    }
+
+    .utility-title {
+      margin: 0 0 10px;
+      color: var(--accent-strong);
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(61, 41, 24, 0.18);
+      border-radius: 10px;
+      padding: 10px 11px;
+      background: rgba(255,255,255,0.34);
+      color: #5a412d;
+      cursor: pointer;
+      font-family: "Cinzel", serif;
+      font-size: 0.83rem;
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .history-item:hover,
+    .history-item:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(229, 199, 143, 0.5);
+      outline: none;
+    }
+
+    .history-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #412718;
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tiny-btn {
+      border: 1px solid rgba(61, 41, 24, 0.22);
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: rgba(255, 248, 231, 0.65);
+      color: #5a3d27;
+      cursor: pointer;
+      font-family: "Cinzel", serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .tiny-btn:hover,
+    .tiny-btn:focus-visible {
+      background: rgba(229, 199, 143, 0.9);
+      outline: none;
+    }
+
+    .empty-note {
+      margin: 0;
+      color: #735a44;
+      font-size: 0.88rem;
+      font-style: italic;
+    }
+
+    .bonus-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .resource-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: 14px;
+      border: 2px solid rgba(61, 41, 24, 0.20);
+      background: linear-gradient(180deg, rgba(255, 247, 229, 0.72), rgba(225, 193, 133, 0.22));
+      box-shadow: 0 8px 14px rgba(40, 21, 10, 0.08);
+    }
+
+    .resource-name {
+      margin: 0 0 4px;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .resource-meta {
+      margin: 0;
+      color: #6b523c;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .footer {
+      padding: 0 16px 22px;
+      text-align: center;
+      color: #70563f;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 720px) {
+      .tabs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .resource-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (max-width: 540px) {
+      body {
+        padding: 12px 8px 26px;
+      }
+
+      .hero {
+        padding-top: 24px;
+      }
+
+      .tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .subcontrols {
+        flex-direction: column;
+      }
+
+      .tab-btn,
+      .action-btn,
+      .mini-btn {
+        width: 100%;
+      }
+
+      .card {
+        transform: none !important;
+        padding: 18px;
+      }
+
+      .result-frame {
+        min-height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="crest" aria-hidden="true"><i class="fa-solid fa-hammer"></i></div>
+      <h1>RolMaster Kit: La Forja del Dungeon Master</h1>
+      <p class="subtitle">
+        Una estación de trabajo offline para improvisar personajes, misiones y mazmorras con aire de códice antiguo y mesa de campaña.
+      </p>
+    </header>
+
+    <nav class="tabs" aria-label="Secciones del kit">
+      <button class="tab-btn active" data-tab="npcs"><i class="fa-solid fa-user-astronaut"></i> NPCs</button>
+      <button class="tab-btn" data-tab="dungeons"><i class="fa-solid fa-dungeon"></i> Mazmorras</button>
+      <button class="tab-btn" data-tab="quests"><i class="fa-solid fa-scroll"></i> Misiones</button>
+      <button class="tab-btn" data-tab="bonus"><i class="fa-solid fa-gem"></i> Bonus</button>
+    </nav>
+
+    <section class="content">
+      <section class="section active" id="npcs">
+        <article class="card">
+          <span class="section-kicker">Forja Social</span>
+          <h2 class="section-title">Generador de NPCs</h2>
+          <p class="section-desc">
+            Prepará un personaje listo para entrar en escena con voz, oficio, ambición y una verdad incómoda escondida bajo la capa.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateNPC()"><i class="fa-solid fa-wand-sparkles"></i> Generar</button>
+            <button class="action-btn secondary" onclick="copyResult('npcResult')"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportTXT('npcResult', 'npc-rolmaster-kit.txt')"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="subcontrols">
+            <button class="mini-btn pin-btn" id="npcPinBtn" onclick="togglePin('npcs')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
+            <button class="mini-btn" onclick="saveFavorite('npcs')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="rerollNPCField('name')">Rehacer nombre</button>
+            <button class="mini-btn" onclick="rerollNPCField('race')">Rehacer raza</button>
+            <button class="mini-btn" onclick="rerollNPCField('job')">Rehacer oficio</button>
+            <button class="mini-btn" onclick="rerollNPCField('personality')">Rehacer rasgo</button>
+            <button class="mini-btn" onclick="rerollNPCField('secret')">Rehacer secreto</button>
+            <button class="mini-btn" onclick="rerollNPCField('goal')">Rehacer objetivo</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="npcResult"><span><i class="fa-solid fa-feather result-empty-icon"></i>El pergamino aguarda un nuevo personaje.</span></div>
+          </div>
+
+          <div class="meta-row" id="npcMeta"></div>
+
+          <div class="utility-grid">
+            <div class="utility-panel">
+              <p class="utility-title">Bitácora reciente</p>
+              <div class="history-list" id="npcHistory"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Estado del pergamino</p>
+              <div class="history-list" id="npcStatus"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Favoritos guardados</p>
+              <div class="history-list" id="npcFavorites"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="dungeons">
+        <article class="card">
+          <span class="section-kicker">Forja de Ruinas</span>
+          <h2 class="section-title">Generador de Mazmorras</h2>
+          <p class="section-desc">
+            Abrí una puerta sellada y dejá salir salas, guardianes, trampas y tesoros listos para una noche de exploración.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateDungeon()"><i class="fa-solid fa-torii-gate"></i> Generar</button>
+            <button class="action-btn secondary" onclick="copyResult('dungeonResult')"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportTXT('dungeonResult', 'mazmorra-rolmaster-kit.txt')"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="subcontrols">
+            <button class="mini-btn pin-btn" id="dungeonPinBtn" onclick="togglePin('dungeons')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
+            <button class="mini-btn" onclick="saveFavorite('dungeons')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="rerollDungeonField('name')">Rehacer nombre</button>
+            <button class="mini-btn" onclick="rerollDungeonField('rooms')">Rehacer salas</button>
+            <button class="mini-btn" onclick="rerollDungeonField('enemy')">Rehacer enemigo</button>
+            <button class="mini-btn" onclick="rerollDungeonField('trap')">Rehacer trampa</button>
+            <button class="mini-btn" onclick="rerollDungeonField('treasure')">Rehacer tesoro</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="dungeonResult"><span><i class="fa-solid fa-skull result-empty-icon"></i>Las piedras antiguas todavía guardan silencio.</span></div>
+          </div>
+
+          <div class="meta-row" id="dungeonMeta"></div>
+
+          <div class="utility-grid">
+            <div class="utility-panel">
+              <p class="utility-title">Bitácora reciente</p>
+              <div class="history-list" id="dungeonHistory"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Estado de exploración</p>
+              <div class="history-list" id="dungeonStatus"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Favoritos guardados</p>
+              <div class="history-list" id="dungeonFavorites"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="quests">
+        <article class="card">
+          <span class="section-kicker">Forja de Aventuras</span>
+          <h2 class="section-title">Generador de Misiones</h2>
+          <p class="section-desc">
+            Encendé un conflicto al instante con un gancho atractivo, escenas potentes, giro dramático y una recompensa que valga el viaje.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateQuest()"><i class="fa-solid fa-feather-pointed"></i> Generar</button>
+            <button class="action-btn secondary" onclick="copyResult('questResult')"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportTXT('questResult', 'mision-rolmaster-kit.txt')"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="subcontrols">
+            <button class="mini-btn pin-btn" id="questPinBtn" onclick="togglePin('quests')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
+            <button class="mini-btn" onclick="saveFavorite('quests')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="rerollQuestField('hook')">Rehacer gancho</button>
+            <button class="mini-btn" onclick="rerollQuestField('scenes')">Rehacer escenas</button>
+            <button class="mini-btn" onclick="rerollQuestField('twist')">Rehacer giro</button>
+            <button class="mini-btn" onclick="rerollQuestField('reward')">Rehacer recompensa</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="questResult"><span><i class="fa-solid fa-scroll result-empty-icon"></i>El destino de la próxima expedición aún no fue escrito.</span></div>
+          </div>
+
+          <div class="meta-row" id="questMeta"></div>
+
+          <div class="utility-grid">
+            <div class="utility-panel">
+              <p class="utility-title">Bitácora reciente</p>
+              <div class="history-list" id="questHistory"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Estado de la trama</p>
+              <div class="history-list" id="questStatus"></div>
+            </div>
+            <div class="utility-panel">
+              <p class="utility-title">Favoritos guardados</p>
+              <div class="history-list" id="questFavorites"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="bonus">
+        <article class="card">
+          <span class="section-kicker">Archivo del Maestro</span>
+          <h2 class="section-title">Recursos Bonus</h2>
+          <p class="section-desc">
+            Material complementario simulado para acompañar la sesión con tablas, mapas y ayudas listas para descargar.
+          </p>
+
+          <div class="bonus-grid">
+            <div class="resource-item">
+              <div>
+                <p class="resource-name"><i class="fa-solid fa-file-pdf"></i> PDF de tablas rápidas</p>
+                <p class="resource-meta">Encuentros, clima, nombres, rumores y complicaciones para improvisar sobre la marcha.</p>
+              </div>
+              <button class="action-btn secondary" onclick="simulateDownload('PDF de tablas rápidas')">Descargar</button>
+            </div>
+
+            <div class="resource-item">
+              <div>
+                <p class="resource-name"><i class="fa-solid fa-map"></i> Mapa de reino fronterizo</p>
+                <p class="resource-meta">Rutas comerciales, fortalezas olvidadas, aldeas y ruinas señaladas para campaña sandbox.</p>
+              </div>
+              <button class="action-btn secondary" onclick="simulateDownload('Mapa de reino fronterizo')">Descargar</button>
+            </div>
+
+            <div class="resource-item">
+              <div>
+                <p class="resource-name"><i class="fa-solid fa-coins"></i> Tokens imprimibles</p>
+                <p class="resource-meta">Héroes, criaturas, aldeanos y marcadores de estado para encuentros rápidos de mesa.</p>
+              </div>
+              <button class="action-btn secondary" onclick="simulateDownload('Tokens imprimibles')">Descargar</button>
+            </div>
+
+            <div class="resource-item">
+              <div>
+                <p class="resource-name"><i class="fa-solid fa-book-skull"></i> Compendio de trampas clásicas</p>
+                <p class="resource-meta">Disparadores, pistas visuales y efectos para mantener la tensión en cualquier ruina.</p>
+              </div>
+              <button class="action-btn secondary" onclick="simulateDownload('Compendio de trampas clásicas')">Descargar</button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <footer class="footer">
+      Kit autónomo en un único archivo HTML con CSS y JavaScript embebidos.
+    </footer>
+  </main>
+
+  <script>
+    // Datos internos del kit: no depende de servidores ni archivos externos de lógica.
+    const data = {
+      npcs: {
+        names: [
+          "Aldric de la Colina", "Mireya Cuervo Blanco", "Thoran Martillo Gris", "Elira Sombraluna",
+          "Brom Barril de Roble", "Selene del Arroyo", "Varik Diente de Lobo", "Ysabel de Hierro",
+          "Darian del Alba", "Nimue del Brezal", "Garruk Piedra Vieja", "Liora Viento Suave",
+          "Cedric Valeforja", "Brunna Escudo Rojo", "Faelan del Bosque Hondo", "Kael Tormenta Baja",
+          "Roswyn Hilandera", "Tiber Hojas Secas", "Maelis Luz de Bronce", "Orin del Puente Viejo"
+        ],
+        races: ["Humano", "Elfo", "Enano", "Mediano", "Semielfo", "Tiefling"],
+        jobs: [
+          "Herrero ambulante", "Tabernera", "Cazador de recompensas", "Sacerdotisa del amanecer",
+          "Mercader de reliquias", "Capitán de guardia", "Herborista", "Bardo itinerante",
+          "Sepulturero", "Cartógrafa real"
+        ],
+        personalities: [
+          "Cortés pero desconfiado", "Bromista en momentos tensos", "Devoto y solemne", "Ambicioso hasta la obsesión",
+          "Bondadosa con los débiles", "Paranoico por experiencias pasadas", "Orgullosa de su linaje", "Sereno y observador"
+        ],
+        secrets: [
+          "Oculta una deuda con un gremio criminal",
+          "Encontró un mapa hacia una tumba prohibida",
+          "Es heredero ilegítimo de una casa noble",
+          "Ha pactado en secreto con una entidad feérica",
+          "Fue responsable de un incendio que devastó una aldea"
+        ],
+        goals: [
+          "Recuperar un objeto familiar robado",
+          "Ascender dentro de su orden o gremio",
+          "Vengar la muerte de un ser querido",
+          "Proteger a alguien que ama en secreto",
+          "Abandonar su pasado y empezar de nuevo"
+        ]
+      },
+      dungeons: {
+        names: [
+          "Cripta de las Cenizas", "Fortaleza del Cuervo Caído", "Catacumbas del Rey Marchito",
+          "Pozos de Salmuera Negra", "Santuario de la Luna Rota", "Galerías del Hierro Dormido",
+          "Ruinas de Valdoran", "Abismo del Eco Ciego", "Bastión del Liche Errante",
+          "Cuevas del Musgo Carmesí", "Torreón de los Mil Candados", "Templo del Sol Hundido",
+          "Fosas del Gusano Blanco", "Biblioteca Sepultada", "Pasaje de los Juramentos Rotos"
+        ],
+        rooms: [
+          "Vestíbulo cubierto de estatuas erosionadas",
+          "Capilla derruida con bancos astillados",
+          "Sala circular con mosaicos arcanos",
+          "Prisión subterránea de barrotes oxidados",
+          "Cámara inundada hasta los tobillos",
+          "Armería saqueada con restos de escudos",
+          "Laboratorio alquímico en ruinas",
+          "Salón del trono cubierto de polvo"
+        ],
+        enemies: [
+          { name: "3 esqueletos guardianes", hp: "12 PV cada uno" },
+          { name: "1 ogro hambriento", hp: "45 PV" },
+          { name: "4 goblins saqueadores", hp: "9 PV cada uno" },
+          { name: "1 espectro encadenado", hp: "38 PV" },
+          { name: "2 arañas gigantes", hp: "26 PV cada una" },
+          { name: "1 sacerdote corrupto", hp: "31 PV" },
+          { name: "5 ratas demoníacas", hp: "6 PV cada una" },
+          { name: "2 armaduras animadas", hp: "33 PV cada una" },
+          { name: "1 troll de caverna", hp: "68 PV" },
+          { name: "1 mímico acechante", hp: "52 PV" }
+        ],
+        magicItems: [
+          "Anillo de protección menor",
+          "Poción de invisibilidad",
+          "Espada corta ígnea",
+          "Capa del caminante nocturno",
+          "Vara de chispas arcanas",
+          "Amuleto contra maldiciones",
+          "Botas de zancada silenciosa",
+          "Grimorio de conjuros olvidados",
+          "Escudo con runas de guardia",
+          "Gema que ilumina tumbas"
+        ],
+        traps: [
+          "Placas de presión que disparan virotes envenenados",
+          "Foso oculto cubierto con tablas podridas",
+          "Runa explosiva grabada en una puerta sellada",
+          "Estatua que exhala gas somnífero",
+          "Techo inestable que colapsa con ruido intenso"
+        ]
+      },
+      quests: {
+        hooks: [
+          "Un noble menor ofrece oro por rescatar a su heredera desaparecida",
+          "La campana del pueblo suena sola cada medianoche desde el cementerio",
+          "Una caravana enana no llegó jamás al paso de montaña",
+          "Los peces del lago aparecen muertos con símbolos grabados en sus escamas",
+          "Un monasterio pide escolta para una reliquia sagrada",
+          "Un mercader afirma haber visto una ciudad fantasma en la niebla",
+          "La milicia busca discretamente a quien robe un libro prohibido",
+          "Una druida suplica ayuda para detener la tala de un bosque antiguo",
+          "Un niño asegura hablar con un rey enterrado bajo la colina",
+          "Una mina cerrada vuelve a emitir cantos desde sus profundidades"
+        ],
+        scenes: [
+          "Encuentro tenso en una taberna llena de rumores",
+          "Emboscada en un puente derruido",
+          "Negociación con un guardián territorial",
+          "Descubrimiento de un santuario oculto",
+          "Viaje nocturno bajo una tormenta antinatural",
+          "Investigación de huellas y restos extraños",
+          "Asedio breve a una torre o empalizada",
+          "Ritual interrumpido justo antes de completarse"
+        ],
+        twists: [
+          "El supuesto villano intentaba contener un mal mayor",
+          "La recompensa prometida fue ofrecida con información falsa",
+          "Uno de los aliados del grupo es un traidor involuntario",
+          "La reliquia buscada está viva o posee voluntad propia",
+          "La amenaza real proviene de alguien considerado héroe local"
+        ],
+        rewards: [
+          "Bolsa con 150 monedas de oro y una carta de recomendación noble",
+          "Título honorífico y acceso a una biblioteca restringida",
+          "Arma bendecida contra criaturas oscuras",
+          "Terreno o casa en la región liberada",
+          "Favor futuro de un gremio poderoso"
+        ]
+      }
+    };
+
+    const forgeState = {
+      npcs: { pinned: false, current: null, history: [], favorites: [] },
+      dungeons: { pinned: false, current: null, history: [], favorites: [] },
+      quests: { pinned: false, current: null, history: [], favorites: [] }
+    };
+
+    const sectionConfig = {
+      npcs: {
+        resultId: "npcResult",
+        metaId: "npcMeta",
+        historyId: "npcHistory",
+        statusId: "npcStatus",
+        favoritesId: "npcFavorites",
+        pinId: "npcPinBtn",
+        emptyCheck: "aguarda un nuevo personaje"
+      },
+      dungeons: {
+        resultId: "dungeonResult",
+        metaId: "dungeonMeta",
+        historyId: "dungeonHistory",
+        statusId: "dungeonStatus",
+        favoritesId: "dungeonFavorites",
+        pinId: "dungeonPinBtn",
+        emptyCheck: "guardan silencio"
+      },
+      quests: {
+        resultId: "questResult",
+        metaId: "questMeta",
+        historyId: "questHistory",
+        statusId: "questStatus",
+        favoritesId: "questFavorites",
+        pinId: "questPinBtn",
+        emptyCheck: "aún no fue escrito"
+      }
+    };
+
+    const storageKey = "rolmaster-kit-favorites-v1";
+
+    function pick(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function roll(sides) {
+      return Math.floor(Math.random() * sides) + 1;
+    }
+
+    function uniquePick(list, used) {
+      let candidate = pick(list);
+      while (used.includes(candidate) && used.length < list.length) {
+        candidate = pick(list);
+      }
+      return candidate;
+    }
+
+    function cloneEntry(entry) {
+      return JSON.parse(JSON.stringify(entry));
+    }
+
+    function saveFavoritesToStorage() {
+      const payload = {
+        npcs: forgeState.npcs.favorites,
+        dungeons: forgeState.dungeons.favorites,
+        quests: forgeState.quests.favorites
+      };
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+    }
+
+    function loadFavoritesFromStorage() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        forgeState.npcs.favorites = parsed.npcs || [];
+        forgeState.dungeons.favorites = parsed.dungeons || [];
+        forgeState.quests.favorites = parsed.quests || [];
+      } catch (error) {
+        forgeState.npcs.favorites = [];
+        forgeState.dungeons.favorites = [];
+        forgeState.quests.favorites = [];
+      }
+    }
+
+    function getTimestamp() {
+      return new Date().toLocaleTimeString("es-AR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function formatNPCResult(entry) {
+      return [
+        "=== NPC GENERADO ===",
+        `Nombre: ${entry.name}`,
+        `Raza: ${entry.race}`,
+        `Oficio: ${entry.job}`,
+        `Personalidad: ${entry.personality}`,
+        `Secreto: ${entry.secret}`,
+        `Objetivo: ${entry.goal}`
+      ].join("\n");
+    }
+
+    function formatDungeonResult(entry) {
+      return [
+        "=== MAZMORRA GENERADA ===",
+        `Nombre: ${entry.name}`,
+        `Sala 1: ${entry.rooms[0]}`,
+        `Sala 2: ${entry.rooms[1]}`,
+        `Sala 3: ${entry.rooms[2]}`,
+        `Enemigo principal: ${entry.enemy.name} (${entry.enemy.hp})`,
+        `Trampa: ${entry.trap}`,
+        "Tesoro:",
+        `- Monedas: ${entry.coins} monedas de oro`,
+        `- Objeto mágico: ${entry.magicItem}`,
+        `- Tirada visible: 1d100 = ${entry.coins}`
+      ].join("\n");
+    }
+
+    function formatQuestResult(entry) {
+      return [
+        "=== MISIÓN GENERADA ===",
+        `Gancho inicial: ${entry.hook}`,
+        `Escena 1: ${entry.scenes[0]}`,
+        `Escena 2: ${entry.scenes[1]}`,
+        `Escena 3: ${entry.scenes[2]}`,
+        `Giro: ${entry.twist}`,
+        `Recompensa: ${entry.reward}`,
+        `Impulso narrativo: 1d6 = ${entry.momentum}`
+      ].join("\n");
+    }
+
+    function createNPCEntry() {
+      return {
+        type: "npcs",
+        name: pick(data.npcs.names),
+        race: pick(data.npcs.races),
+        job: pick(data.npcs.jobs),
+        personality: pick(data.npcs.personalities),
+        secret: pick(data.npcs.secrets),
+        goal: pick(data.npcs.goals),
+        timestamp: getTimestamp()
+      };
+    }
+
+    function createDungeonEntry() {
+      return {
+        type: "dungeons",
+        name: pick(data.dungeons.names),
+        rooms: generateDistinctRooms(),
+        enemy: pick(data.dungeons.enemies),
+        trap: pick(data.dungeons.traps),
+        coins: roll(100),
+        magicItem: pick(data.dungeons.magicItems),
+        timestamp: getTimestamp()
+      };
+    }
+
+    function createQuestEntry() {
+      return {
+        type: "quests",
+        hook: pick(data.quests.hooks),
+        scenes: generateDistinctScenes(),
+        twist: pick(data.quests.twists),
+        reward: pick(data.quests.rewards),
+        momentum: roll(6),
+        timestamp: getTimestamp()
+      };
+    }
+
+    function getSummary(section, entry) {
+      if (section === "npcs") return { title: entry.name, note: `${entry.race} • ${entry.job}` };
+      if (section === "dungeons") return { title: entry.name, note: `${entry.enemy.name} • 1d100=${entry.coins}` };
+      return { title: entry.hook, note: `Giro: ${entry.twist}` };
+    }
+
+    function generateDistinctRooms() {
+      const used = [];
+      const roomOne = uniquePick(data.dungeons.rooms, used);
+      used.push(roomOne);
+      const roomTwo = uniquePick(data.dungeons.rooms, used);
+      used.push(roomTwo);
+      const roomThree = uniquePick(data.dungeons.rooms, used);
+      return [roomOne, roomTwo, roomThree];
+    }
+
+    function generateDistinctScenes() {
+      const used = [];
+      const sceneOne = uniquePick(data.quests.scenes, used);
+      used.push(sceneOne);
+      const sceneTwo = uniquePick(data.quests.scenes, used);
+      used.push(sceneTwo);
+      const sceneThree = uniquePick(data.quests.scenes, used);
+      return [sceneOne, sceneTwo, sceneThree];
+    }
+
+    function getMetaPills(section, entry) {
+      if (section === "npcs") {
+        return [
+          { icon: "fa-user", text: `${entry.race}` },
+          { icon: "fa-briefcase", text: `${entry.job}` },
+          { icon: "fa-thumbtack", text: forgeState.npcs.pinned ? "Fijado" : "Libre" }
+        ];
+      }
+
+      if (section === "dungeons") {
+        return [
+          { icon: "fa-dice-d20", text: `Botín 1d100 = ${entry.coins}` },
+          { icon: "fa-skull", text: entry.enemy.hp },
+          { icon: "fa-thumbtack", text: forgeState.dungeons.pinned ? "Fijado" : "Libre" }
+        ];
+      }
+
+      return [
+        { icon: "fa-scroll", text: `3 escenas activas` },
+        { icon: "fa-dice", text: `Impulso 1d6 = ${entry.momentum}` },
+        { icon: "fa-thumbtack", text: forgeState.quests.pinned ? "Fijado" : "Libre" }
+      ];
+    }
+
+    function hasGeneratedContent(text, section) {
+      return text && !text.includes(sectionConfig[section].emptyCheck);
+    }
+
+    function setResult(section, text) {
+      const target = document.getElementById(sectionConfig[section].resultId);
+      target.textContent = text;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    function renderMeta(section) {
+      const entry = forgeState[section].current;
+      const container = document.getElementById(sectionConfig[section].metaId);
+
+      if (!entry) {
+        container.innerHTML = "";
+        return;
+      }
+
+      container.innerHTML = getMetaPills(section, entry)
+        .map((pill) => `<span class="meta-pill"><i class="fa-solid ${pill.icon}"></i>${pill.text}</span>`)
+        .join("");
+    }
+
+    function renderHistory(section) {
+      const container = document.getElementById(sectionConfig[section].historyId);
+      const history = forgeState[section].history;
+
+      if (!history.length) {
+        container.innerHTML = '<p class="empty-note">Todavía no hay registros en la bitácora.</p>';
+        return;
+      }
+
+      container.innerHTML = history.map((entry, index) => {
+        const summary = getSummary(section, entry);
+        return `
+          <button class="history-item" onclick="restoreHistory('${section}', ${index})">
+            <strong>${summary.title}</strong>
+            <span>${summary.note}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderStatus(section) {
+      const container = document.getElementById(sectionConfig[section].statusId);
+      const state = forgeState[section];
+
+      if (!state.current) {
+        container.innerHTML = '<p class="empty-note">Generá un resultado para empezar a trabajar este módulo.</p>';
+        return;
+      }
+
+      const summary = getSummary(section, state.current);
+      container.innerHTML = `
+        <div class="history-item" tabindex="-1">
+          <strong>Activo: ${summary.title}</strong>
+          <span>${summary.note}</span>
+        </div>
+        <div class="history-item" tabindex="-1">
+          <strong>Estado</strong>
+          <span>${state.pinned ? "Resultado fijado. No se sobrescribe al generar." : "Resultado editable. Podés regenerar libremente."}</span>
+        </div>
+        <div class="history-item" tabindex="-1">
+          <strong>Última forja</strong>
+          <span>${state.current.timestamp}</span>
+        </div>
+      `;
+    }
+
+    function renderFavorites(section) {
+      const container = document.getElementById(sectionConfig[section].favoritesId);
+      const favorites = forgeState[section].favorites;
+
+      if (!favorites.length) {
+        container.innerHTML = '<p class="empty-note">Todavía no guardaste favoritos en este módulo.</p>';
+        return;
+      }
+
+      container.innerHTML = favorites.map((entry, index) => {
+        const summary = getSummary(section, entry);
+        return `
+          <div class="history-item">
+            <strong>${summary.title}</strong>
+            <span>${summary.note}</span>
+            <div class="history-actions">
+              <button class="tiny-btn" onclick="restoreFavorite('${section}', ${index})">Restaurar</button>
+              <button class="tiny-btn" onclick="removeFavorite('${section}', ${index})">Quitar</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPin(section) {
+      const button = document.getElementById(sectionConfig[section].pinId);
+      const isPinned = forgeState[section].pinned;
+      button.classList.toggle("active", isPinned);
+      button.innerHTML = isPinned
+        ? '<i class="fa-solid fa-lock"></i> Resultado fijado'
+        : '<i class="fa-solid fa-thumbtack"></i> Fijar resultado';
+    }
+
+    function renderSection(section) {
+      renderMeta(section);
+      renderHistory(section);
+      renderStatus(section);
+      renderFavorites(section);
+      renderPin(section);
+    }
+
+    function commitEntry(section, entry, options = {}) {
+      const { skipHistory = false } = options;
+      forgeState[section].current = entry;
+
+      if (!skipHistory) {
+        forgeState[section].history.unshift(cloneEntry(entry));
+        forgeState[section].history = forgeState[section].history.slice(0, 5);
+      }
+
+      const formatter = section === "npcs"
+        ? formatNPCResult
+        : section === "dungeons"
+          ? formatDungeonResult
+          : formatQuestResult;
+
+      setResult(section, formatter(entry));
+      renderSection(section);
+    }
+
+    function ensureEditable(section) {
+      if (forgeState[section].pinned) {
+        alert("Ese resultado está fijado. Desfijalo para generar uno nuevo.");
+        return false;
+      }
+
+      if (!forgeState[section].current) {
+        alert("Primero generá un resultado.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function generateNPC() {
+      if (forgeState.npcs.pinned) {
+        alert("Ese resultado está fijado. Desfijalo para generar uno nuevo.");
+        return;
+      }
+
+      commitEntry("npcs", createNPCEntry());
+    }
+
+    function generateDungeon() {
+      if (forgeState.dungeons.pinned) {
+        alert("Ese resultado está fijado. Desfijalo para generar uno nuevo.");
+        return;
+      }
+
+      commitEntry("dungeons", createDungeonEntry());
+    }
+
+    function generateQuest() {
+      if (forgeState.quests.pinned) {
+        alert("Ese resultado está fijado. Desfijalo para generar uno nuevo.");
+        return;
+      }
+
+      commitEntry("quests", createQuestEntry());
+    }
+
+    function rerollNPCField(field) {
+      if (!ensureEditable("npcs")) return;
+
+      const entry = { ...forgeState.npcs.current };
+      const map = {
+        name: () => pick(data.npcs.names),
+        race: () => pick(data.npcs.races),
+        job: () => pick(data.npcs.jobs),
+        personality: () => pick(data.npcs.personalities),
+        secret: () => pick(data.npcs.secrets),
+        goal: () => pick(data.npcs.goals)
+      };
+
+      entry[field] = map[field]();
+      entry.timestamp = getTimestamp();
+      commitEntry("npcs", entry);
+    }
+
+    function rerollDungeonField(field) {
+      if (!ensureEditable("dungeons")) return;
+
+      const entry = {
+        ...forgeState.dungeons.current,
+        rooms: [...forgeState.dungeons.current.rooms],
+        enemy: { ...forgeState.dungeons.current.enemy }
+      };
+
+      if (field === "name") entry.name = pick(data.dungeons.names);
+      if (field === "rooms") entry.rooms = generateDistinctRooms();
+      if (field === "enemy") entry.enemy = pick(data.dungeons.enemies);
+      if (field === "trap") entry.trap = pick(data.dungeons.traps);
+      if (field === "treasure") {
+        entry.coins = roll(100);
+        entry.magicItem = pick(data.dungeons.magicItems);
+      }
+
+      entry.timestamp = getTimestamp();
+      commitEntry("dungeons", entry);
+    }
+
+    function rerollQuestField(field) {
+      if (!ensureEditable("quests")) return;
+
+      const entry = {
+        ...forgeState.quests.current,
+        scenes: [...forgeState.quests.current.scenes]
+      };
+
+      if (field === "hook") entry.hook = pick(data.quests.hooks);
+      if (field === "scenes") entry.scenes = generateDistinctScenes();
+      if (field === "twist") entry.twist = pick(data.quests.twists);
+      if (field === "reward") {
+        entry.reward = pick(data.quests.rewards);
+        entry.momentum = roll(6);
+      }
+
+      entry.timestamp = getTimestamp();
+      commitEntry("quests", entry);
+    }
+
+    function togglePin(section) {
+      if (!forgeState[section].current) {
+        alert("Primero generá un resultado.");
+        return;
+      }
+
+      forgeState[section].pinned = !forgeState[section].pinned;
+      renderSection(section);
+    }
+
+    function saveFavorite(section) {
+      if (!forgeState[section].current) {
+        alert("Primero generá un resultado.");
+        return;
+      }
+
+      forgeState[section].favorites.unshift(cloneEntry(forgeState[section].current));
+      forgeState[section].favorites = forgeState[section].favorites.slice(0, 8);
+      saveFavoritesToStorage();
+      renderFavorites(section);
+      renderStatus(section);
+    }
+
+    function restoreFavorite(section, index) {
+      const entry = cloneEntry(forgeState[section].favorites[index]);
+      if (!entry) return;
+      entry.timestamp = getTimestamp();
+      forgeState[section].current = entry;
+      const formatter = section === "npcs"
+        ? formatNPCResult
+        : section === "dungeons"
+          ? formatDungeonResult
+          : formatQuestResult;
+      setResult(section, formatter(entry));
+      renderSection(section);
+    }
+
+    function removeFavorite(section, index) {
+      forgeState[section].favorites.splice(index, 1);
+      saveFavoritesToStorage();
+      renderFavorites(section);
+    }
+
+    function restoreHistory(section, index) {
+      const entry = cloneEntry(forgeState[section].history[index]);
+      if (!entry) return;
+      entry.timestamp = getTimestamp();
+      forgeState[section].current = entry;
+      const formatter = section === "npcs"
+        ? formatNPCResult
+        : section === "dungeons"
+          ? formatDungeonResult
+          : formatQuestResult;
+      setResult(section, formatter(entry));
+      renderSection(section);
+    }
+
+    // Copia al portapapeles con fallback para contextos no seguros.
+    async function copyResult(resultId) {
+      const text = document.getElementById(resultId).textContent.trim();
+      const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
+
+      if (!hasGeneratedContent(text, section)) {
+        alert("Primero generá un resultado.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Resultado copiado al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    // Exporta un archivo .txt legible con el contenido generado.
+    function exportTXT(resultId, filename) {
+      const text = document.getElementById(resultId).textContent.trim();
+      const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
+
+      if (!hasGeneratedContent(text, section)) {
+        alert("Primero generá un resultado.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function simulateDownload() {
+      alert("Este recurso se incluye en la versión completa");
+    }
+
+    // Sistema simple de pestañas para mantener la experiencia en una sola página.
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const sections = document.querySelectorAll(".section");
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetId = button.dataset.tab;
+
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        sections.forEach((section) => section.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(targetId).classList.add("active");
+      });
+    });
+
+    loadFavoritesFromStorage();
+    renderSection("npcs");
+    renderSection("dungeons");
+    renderSection("quests");
+  </script>
+</body>
+</html>
