@@ -802,6 +802,10 @@
             Material complementario simulado para acompañar la sesión con tablas, mapas y ayudas listas para descargar.
           </p>
 
+          <div class="controls">
+            <button class="action-btn" onclick="exportCampaignBundle()"><i class="fa-solid fa-book-open"></i> Exportar campaña completa</button>
+          </div>
+
           <div class="bonus-divider"></div>
 
           <h3 class="section-title" style="font-size:1.35rem;">Encuentros Rápidos</h3>
@@ -1665,6 +1669,65 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = "encuentro-rapido-rolmaster-kit.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCampaignBundle() {
+      const npcText = document.getElementById("npcResult").textContent.trim();
+      const dungeonText = document.getElementById("dungeonResult").textContent.trim();
+      const questText = document.getElementById("questResult").textContent.trim();
+      const encounterText = document.getElementById("bonusEncounterResult").textContent.trim();
+
+      const sections = [
+        {
+          title: "NPC PRINCIPAL",
+          ready: hasGeneratedContent(npcText, "npcs"),
+          text: npcText
+        },
+        {
+          title: "MAZMORRA",
+          ready: hasGeneratedContent(dungeonText, "dungeons"),
+          text: dungeonText
+        },
+        {
+          title: "MISIÓN",
+          ready: hasGeneratedContent(questText, "quests"),
+          text: questText
+        },
+        {
+          title: "ENCUENTRO RÁPIDO",
+          ready: hasBonusEncounterContent(),
+          text: encounterText
+        }
+      ];
+
+      const hasAnyContent = sections.some((section) => section.ready);
+      if (!hasAnyContent) {
+        alert("Generá al menos un elemento antes de exportar la campaña completa.");
+        return;
+      }
+
+      const bundle = [
+        "ROLMASTER KIT: LA FORJA DEL DUNGEON MASTER",
+        "=== PAQUETE DE CAMPANA ===",
+        `Fecha de exportacion: ${new Date().toLocaleString("es-AR")}`,
+        ""
+      ];
+
+      sections.forEach((section) => {
+        bundle.push(`--- ${section.title} ---`);
+        bundle.push(section.ready ? section.text : "No generado en esta sesion.");
+        bundle.push("");
+      });
+
+      const blob = new Blob([bundle.join("\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "campana-completa-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
