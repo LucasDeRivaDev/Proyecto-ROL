@@ -573,6 +573,12 @@
       line-height: 1.45;
     }
 
+    .bonus-divider {
+      height: 1px;
+      margin: 18px 0;
+      background: linear-gradient(90deg, transparent, rgba(61, 41, 24, 0.35), transparent);
+    }
+
     .footer {
       padding: 0 16px 22px;
       text-align: center;
@@ -796,6 +802,23 @@
             Material complementario simulado para acompañar la sesión con tablas, mapas y ayudas listas para descargar.
           </p>
 
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">Encuentros Rápidos</h3>
+          <p class="section-desc">
+            Una chispa adicional para poblar caminos, tabernas y campamentos con tensión inmediata, color local y posibles complicaciones.
+          </p>
+
+          <div class="controls">
+            <button class="action-btn" onclick="generateEncounter()"><i class="fa-solid fa-dice-d20"></i> Generar encuentro</button>
+            <button class="action-btn secondary" onclick="copyBonusEncounter()"><i class="fa-solid fa-copy"></i> Copiar resultado</button>
+            <button class="action-btn secondary" onclick="exportBonusEncounter()"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+
+          <div class="result-frame">
+            <div class="result empty" id="bonusEncounterResult"><span><i class="fa-solid fa-campground result-empty-icon"></i>La ruta todavía no trajo ningún encuentro inesperado.</span></div>
+          </div>
+
           <div class="bonus-grid">
             <div class="resource-item">
               <div>
@@ -960,6 +983,54 @@
           "Arma bendecida contra criaturas oscuras",
           "Terreno o casa en la región liberada",
           "Favor futuro de un gremio poderoso"
+        ]
+      },
+      bonus: {
+        locations: [
+          "camino boscoso cubierto de niebla",
+          "puente de piedra sobre un arroyo turbulento",
+          "taberna atestada al borde del camino real",
+          "mercado improvisado junto a una muralla en ruinas",
+          "campamento de peregrinos bajo una colina sagrada",
+          "sendero de montaña azotado por viento helado",
+          "clariana usada por leñadores y cazadores",
+          "vado poco profundo con restos de carros viejos"
+        ],
+        groups: [
+          "un grupo de mercenarios cansados pero alerta",
+          "tres bandidos disfrazados de viajeros",
+          "una familia de aldeanos huyendo de algo peor",
+          "un caballero errante con su escudero herido",
+          "una compañía de artistas ambulantes demasiado curiosos",
+          "dos acólitos que escoltan una caja sellada",
+          "un cazador enano cubierto de barro y sangre ajena",
+          "una patrulla local superada por los acontecimientos"
+        ],
+        tensions: [
+          "buscan ayuda inmediata antes de que anochezca",
+          "discuten por la posesión de un objeto maldito",
+          "ocultan a un fugitivo entre sus pertenencias",
+          "vigilan algo enterrado que intenta salir",
+          "creen que uno de los presentes es un cambiaformas",
+          "quieren contratar espadas pero esconden el verdadero motivo",
+          "han roto un juramento sagrado y temen represalias",
+          "acaban de sobrevivir a una emboscada aún cercana"
+        ],
+        twists: [
+          "la amenaza real no está frente al grupo sino detrás de ellos",
+          "uno de los supuestos inocentes es el culpable principal",
+          "el encuentro fue preparado para medir a los aventureros",
+          "el objeto en disputa contiene un mapa vivo",
+          "la autoridad local también forma parte del problema",
+          "la ayuda pedida implica romper una ley del reino"
+        ],
+        rewards: [
+          "una bolsa con 2d20 monedas de plata y provisiones",
+          "información precisa sobre una ruina cercana",
+          "un talismán menor de buena fortuna",
+          "pasaje seguro y hospitalidad en la próxima aldea",
+          "el nombre de un contacto valioso en la ciudad",
+          "un cofre pequeño con joyas discretas y una llave extraña"
         ]
       }
     };
@@ -1184,6 +1255,11 @@
 
     function hasGeneratedContent(text, section) {
       return text && !text.includes(sectionConfig[section].emptyCheck);
+    }
+
+    function hasBonusEncounterContent() {
+      const text = document.getElementById("bonusEncounterResult").textContent.trim();
+      return text && !text.includes("La ruta todavía no trajo");
     }
 
     function setResult(section, text) {
@@ -1520,6 +1596,75 @@
       const link = document.createElement("a");
       link.href = url;
       link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateEncounter() {
+      const silver = roll(20) + roll(20);
+      const encounter = [
+        "=== ENCUENTRO RÁPIDO ===",
+        `Lugar: ${pick(data.bonus.locations)}`,
+        `Quienes están aquí: ${pick(data.bonus.groups)}`,
+        `Tensión inmediata: ${pick(data.bonus.tensions)}`,
+        `Giro posible: ${pick(data.bonus.twists)}`,
+        `Recompensa potencial: ${pick(data.bonus.rewards).replace("2d20", `${silver}`)}`,
+        `Tirada visible: 2d20 = ${silver}`
+      ].join("\n");
+
+      const target = document.getElementById("bonusEncounterResult");
+      target.textContent = encounter;
+      target.classList.remove("empty");
+      target.animate(
+        [
+          { opacity: 0.35, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 240, easing: "ease-out" }
+      );
+    }
+
+    async function copyBonusEncounter() {
+      const text = document.getElementById("bonusEncounterResult").textContent.trim();
+
+      if (!hasBonusEncounterContent()) {
+        alert("Primero generá un encuentro.");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+
+        alert("Encuentro copiado al portapapeles.");
+      } catch (error) {
+        alert("No se pudo copiar automáticamente. Probá nuevamente.");
+      }
+    }
+
+    function exportBonusEncounter() {
+      const text = document.getElementById("bonusEncounterResult").textContent.trim();
+
+      if (!hasBonusEncounterContent()) {
+        alert("Primero generá un encuentro.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "encuentro-rapido-rolmaster-kit.txt";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
