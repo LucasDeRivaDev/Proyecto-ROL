@@ -940,6 +940,7 @@
           <div class="subcontrols">
             <button class="mini-btn pin-btn" id="npcPinBtn" onclick="togglePin('npcs')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
             <button class="mini-btn" onclick="saveFavorite('npcs')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="exportVisualSVG('npcPortrait', 'npc-retrato-rolmaster-kit.svg', 'Primero generá un NPC para exportar su retrato.')">Exportar retrato SVG</button>
             <button class="mini-btn" onclick="rerollNPCField('name')">Rehacer nombre</button>
             <button class="mini-btn" onclick="rerollNPCField('race')">Rehacer raza</button>
             <button class="mini-btn" onclick="rerollNPCField('job')">Rehacer oficio</button>
@@ -995,6 +996,7 @@
           <div class="subcontrols">
             <button class="mini-btn pin-btn" id="dungeonPinBtn" onclick="togglePin('dungeons')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
             <button class="mini-btn" onclick="saveFavorite('dungeons')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="exportVisualSVG('dungeonMap', 'mazmorra-mapa-rolmaster-kit.svg', 'Primero generá una mazmorra para exportar su mapa.')">Exportar mapa SVG</button>
             <button class="mini-btn" onclick="rerollDungeonField('name')">Rehacer nombre</button>
             <button class="mini-btn" onclick="rerollDungeonField('rooms')">Rehacer salas</button>
             <button class="mini-btn" onclick="rerollDungeonField('enemy')">Rehacer enemigo</button>
@@ -1049,6 +1051,7 @@
           <div class="subcontrols">
             <button class="mini-btn pin-btn" id="questPinBtn" onclick="togglePin('quests')"><i class="fa-solid fa-thumbtack"></i> Fijar resultado</button>
             <button class="mini-btn" onclick="saveFavorite('quests')"><i class="fa-solid fa-star"></i> Guardar favorito</button>
+            <button class="mini-btn" onclick="exportVisualSVG('questScene', 'mision-escena-rolmaster-kit.svg', 'Primero generá una misión para exportar su escena.')">Exportar escena SVG</button>
             <button class="mini-btn" onclick="rerollQuestField('hook')">Rehacer gancho</button>
             <button class="mini-btn" onclick="rerollQuestField('scenes')">Rehacer escenas</button>
             <button class="mini-btn" onclick="rerollQuestField('twist')">Rehacer giro</button>
@@ -2435,6 +2438,31 @@
       } catch (error) {
         alert("No se pudo copiar automáticamente. Probá nuevamente.");
       }
+    }
+
+    // Exporta el SVG visible de un panel visual para reutilizarlo fuera del kit.
+    function exportVisualSVG(containerId, filename, emptyMessage) {
+      const container = document.getElementById(containerId);
+      const svg = container.querySelector("svg");
+
+      if (!svg) {
+        alert(emptyMessage);
+        return;
+      }
+
+      const svgMarkup = svg.outerHTML.includes('xmlns="http://www.w3.org/2000/svg"')
+        ? svg.outerHTML
+        : svg.outerHTML.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+
+      const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
     // Exporta un archivo .txt legible con el contenido generado.
