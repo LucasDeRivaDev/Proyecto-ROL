@@ -3160,6 +3160,8 @@
         "@media (max-width:800px) { .sheet-visual-grid,.sheet-content-grid { grid-template-columns:1fr; } }"
       ].join("\n");
 
+      const closeTag = (name) => `<${"/"}${name}>`;
+
       const html = [
         "<!DOCTYPE html>",
         '<html lang="es">',
@@ -3167,9 +3169,9 @@
         '  <meta charset="UTF-8" />',
         '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
         "  <title>RolMaster Kit - Ficha de Sesión</title>",
-        "  <" + "style>",
+        "  <style>",
         styleBlock,
-        "  <" + "/style>",
+        `  ${closeTag("style")}`,
         "</head>",
         "<body>",
         '  <main class="sheet">',
@@ -3189,8 +3191,8 @@
         `      <div class="sheet-content-grid">${contentBlocks}</div>`,
         "    </section>",
         "  </main>",
-        "</body>",
-        "</html>"
+        closeTag("body"),
+        closeTag("html")
       ].join("\n");
 
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
