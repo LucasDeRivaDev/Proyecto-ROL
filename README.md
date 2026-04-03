@@ -2,19 +2,64 @@
 
 Kit offline en una sola pagina HTML para Dungeon Masters de juegos de rol medievales y fantasticos.
 
-El proyecto esta pensado para abrirse directamente en el navegador y ofrecer herramientas rapidas de mesa sin depender de frameworks ni backend.
+El proyecto esta pensado para abrirse directamente en el navegador y ofrecer herramientas rapidas de mesa sin depender de frameworks, backend ni instalacion.
 
-## Caracteristicas
+## Estado
 
-- Generador de NPCs con nombre, raza, oficio, personalidad, secreto y objetivo.
-- Generador de mazmorras con salas, enemigos, trampas y tesoros.
-- Generador de misiones con gancho, escenas, giro y recompensa.
-- Seccion bonus con encuentros rapidos, rumores de taberna y tesoros menores.
-- Historial reciente por modulo.
-- Favoritos persistentes usando `localStorage`.
-- Botones para copiar resultados y exportarlos como `.txt`.
-- Exportacion de campana completa en un solo archivo de texto.
-- Interfaz responsive con estetica de pergamino.
+Version actual: candidata a testing integral.
+
+El proyecto ya cuenta con:
+
+- flujo jugable principal completo
+- exportaciones multiples
+- favoritos persistentes
+- importacion y exportacion de campanas en JSON
+- visuales procedurales offline
+- compatibilidad corregida para uso con Live Server
+
+## Caracteristicas principales
+
+### Generadores base
+
+- NPCs con nombre, raza, oficio, personalidad, secreto y objetivo
+- Mazmorras con nombre, salas, enemigo, trampa y tesoro
+- Misiones con gancho, escenas, giro y recompensa
+
+### Herramientas de mesa
+
+- historial reciente por modulo
+- favoritos persistentes con `localStorage`
+- fijado de resultados para evitar sobreescrituras
+- reroll parcial por campos
+- nombre de campana editable y persistente
+
+### Bonus incluidos
+
+- encuentros rapidos
+- rumores de taberna
+- tabernas
+- asentamientos
+- facciones
+- tesoros menores
+- recursos simulados descargables
+
+### Capa visual
+
+- retrato procedural para NPCs
+- minimapa procedural para mazmorras
+- escena procedural para misiones
+- portada procedural de campana
+- galeria visual de campana
+
+### Exportaciones
+
+- TXT por generador
+- TXT de campana completa
+- SVG individuales de retrato, mapa y escena
+- exportacion conjunta de visuales
+- ficha de sesion en HTML
+- modo impresion
+- guardado y carga de campana en JSON
 
 ## Tecnologias
 
@@ -28,38 +73,31 @@ El proyecto esta pensado para abrirse directamente en el navegador y ofrecer her
 
 1. Descarga o clona el repositorio.
 2. Abre [index.html](./index.html) en tu navegador.
-3. Usa las pestanas para cambiar entre NPCs, mazmorras, misiones y bonus.
-4. Genera contenido, guardalo en favoritos o exportalo en TXT.
+3. Tambien podes usar Live Server si preferis recarga automatica.
+4. Usa las pestanas para cambiar entre NPCs, mazmorras, misiones y bonus.
+5. Genera contenido, fijalo, guardalo en favoritos o exportalo.
 
-No requiere instalacion ni servidor local.
+No requiere dependencias ni build.
 
-## Estructura
+## Archivos clave
 
-- `index.html`: aplicacion completa en un solo archivo.
+- `index.html`: aplicacion completa en un solo archivo
+- `README.md`: descripcion general del proyecto
+- `QA-CHECKLIST.md`: guia de prueba manual recomendada
 
-## Funcionalidades destacadas
+## Testing manual sugerido
 
-### Generadores principales
+La checklist recomendada esta en [QA-CHECKLIST.md](./QA-CHECKLIST.md).
 
-Cada generador incluye:
+Incluye pruebas para:
 
-- boton de generar
-- copiado al portapapeles
-- exportacion TXT
-- reroll parcial
-- fijado de resultado
-- historial
-- favoritos
-
-### Recursos bonus
-
-La seccion bonus incluye:
-
-- recursos simulados descargables
-- encuentros rapidos
-- rumores de taberna
-- tesoros menores
-- exportacion de campana completa
+- generacion de contenido
+- copiar y exportar
+- importacion y exportacion JSON
+- impresion
+- responsive
+- persistencia local
+- uso con Live Server
 
 ## Filosofia del proyecto
 
@@ -68,15 +106,12 @@ RolMaster Kit busca ser:
 - rapido de abrir
 - facil de compartir
 - util en mesa
+- visualmente tematico
 - mantenible como archivo unico
 
-## Roadmap sugerido
+## Roadmap posible
 
-- modo impresion
-- generador de tabernas o asentamientos
-- semillas aleatorias reproducibles
-- mejores bloques visuales para exportaciones y resultados
-
-## Estado
-
-Proyecto activo en iteracion continua.
+- exportacion PNG de portada y visuales
+- semillas reproducibles para resultados
+- ajustes finos de UX y accesibilidad
+- release etiquetada `v0.1`
