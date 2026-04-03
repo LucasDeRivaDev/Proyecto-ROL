@@ -6,7 +6,9 @@ El proyecto esta pensado para abrirse directamente en el navegador y ofrecer her
 
 ## Estado
 
-Version actual: candidata a testing integral.
+Version actual: `v0.1`
+
+Primera release manual del proyecto, lista para testing funcional y pulido fino.
 
 El proyecto ya cuenta con:
 
@@ -109,9 +111,21 @@ RolMaster Kit busca ser:
 - visualmente tematico
 - mantenible como archivo unico
 
+## Release actual
+
+La release `v0.1` incluye:
+
+- generadores principales completos
+- herramientas bonus de apoyo de mesa
+- visuales procedurales offline
+- exportaciones TXT, SVG, HTML y JSON
+- persistencia local de favoritos y nombre de campana
+- compatibilidad corregida para uso con Live Server
+- checklist de QA para validacion manual
+
 ## Roadmap posible
 
 - exportacion PNG de portada y visuales
 - semillas reproducibles para resultados
 - ajustes finos de UX y accesibilidad
-- release etiquetada `v0.1`
+- futura `v0.2` con mejoras de presentacion o shareability
