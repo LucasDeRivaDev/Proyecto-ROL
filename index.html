@@ -1239,7 +1239,10 @@
             <button class="action-btn" onclick="exportCampaignBundle()"><i class="fa-solid fa-book-open"></i> Exportar campaña completa</button>
             <button class="action-btn secondary" onclick="exportCampaignHTML()"><i class="fa-solid fa-scroll"></i> Exportar ficha HTML</button>
             <button class="action-btn secondary" onclick="printCampaignSheet()"><i class="fa-solid fa-print"></i> Modo impresión</button>
+            <button class="action-btn secondary" onclick="exportCampaignJSON()"><i class="fa-solid fa-floppy-disk"></i> Guardar campaña JSON</button>
+            <button class="action-btn secondary" onclick="triggerCampaignImport()"><i class="fa-solid fa-folder-open"></i> Cargar campaña JSON</button>
           </div>
+          <input type="file" id="campaignImportInput" accept=".json,application/json" hidden onchange="handleCampaignImport(event)" />
 
           <div class="bonus-divider"></div>
 
@@ -1879,6 +1882,18 @@
       }
     };
 
+    const emptyMarkup = {
+      npcs: '<span><i class="fa-solid fa-user result-empty-icon"></i>El códice aguarda un nuevo personaje.</span>',
+      dungeons: '<span><i class="fa-solid fa-dungeon result-empty-icon"></i>Las piedras antiguas guardan silencio hasta que forjés una nueva ruina.</span>',
+      quests: '<span><i class="fa-solid fa-scroll result-empty-icon"></i>La próxima aventura aún no fue escrita en el pergamino.</span>',
+      bonusEncounterResult: '<span><i class="fa-solid fa-campground result-empty-icon"></i>La ruta todavía no trajo ningún encuentro inesperado.</span>',
+      bonusRumorResult: '<span><i class="fa-solid fa-comment-dots result-empty-icon"></i>Los parroquianos aún no dejaron caer ningún rumor útil.</span>',
+      bonusTavernResult: '<span><i class="fa-solid fa-beer-mug-empty result-empty-icon"></i>La posada perfecta todavía no abrió sus puertas.</span>',
+      bonusSettlementResult: '<span><i class="fa-solid fa-house-chimney result-empty-icon"></i>El mapa aún no muestra un nuevo asentamiento.</span>',
+      bonusFactionResult: '<span><i class="fa-solid fa-people-group result-empty-icon"></i>Todavía no emergió ninguna facción en este territorio.</span>',
+      bonusTreasureResult: '<span><i class="fa-solid fa-gem result-empty-icon"></i>El botín menor todavía no salió a la luz.</span>'
+    };
+
     const storageKey = "rolmaster-kit-favorites-v1";
     const defaultCampaignName = "Crónicas del Reino Fronterizo";
     let campaignName = defaultCampaignName;
@@ -1952,6 +1967,23 @@
       campaignName = nextValue || defaultCampaignName;
       updateCampaignUI();
       saveFavoritesToStorage();
+    }
+
+    function setEmptyContent(elementId, markup) {
+      const target = document.getElementById(elementId);
+      target.innerHTML = markup;
+      target.classList.add("empty");
+    }
+
+    function setBonusResult(resultId, text) {
+      const target = document.getElementById(resultId);
+      if (text && text.trim()) {
+        target.textContent = text.trim();
+        target.classList.remove("empty");
+        return;
+      }
+
+      setEmptyContent(resultId, emptyMarkup[resultId]);
     }
 
     function getTimestamp() {
@@ -2135,6 +2167,10 @@
         ],
         { duration: 240, easing: "ease-out" }
       );
+    }
+
+    function resetPrimaryResult(section) {
+      setEmptyContent(sectionConfig[section].resultId, emptyMarkup[section]);
     }
 
     function renderMeta(section) {
@@ -2981,6 +3017,120 @@
       URL.revokeObjectURL(url);
     }
 
+    function getActiveTabId() {
+      const activeTab = document.querySelector(".tab-btn.active");
+      return activeTab ? activeTab.dataset.tab : "npcs";
+    }
+
+    function buildCampaignSnapshot() {
+      return {
+        app: "rolmaster-kit",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        campaignName,
+        activeTab: getActiveTabId(),
+        forgeState: cloneEntry(forgeState),
+        bonus: {
+          encounter: hasBonusEncounterContent() ? document.getElementById("bonusEncounterResult").textContent.trim() : "",
+          rumor: hasBonusRumorContent() ? document.getElementById("bonusRumorResult").textContent.trim() : "",
+          tavern: hasBonusTavernContent() ? document.getElementById("bonusTavernResult").textContent.trim() : "",
+          settlement: hasBonusSettlementContent() ? document.getElementById("bonusSettlementResult").textContent.trim() : "",
+          faction: hasBonusFactionContent() ? document.getElementById("bonusFactionResult").textContent.trim() : "",
+          treasure: hasBonusTreasureContent() ? document.getElementById("bonusTreasureResult").textContent.trim() : ""
+        }
+      };
+    }
+
+    function exportCampaignJSON() {
+      const snapshot = buildCampaignSnapshot();
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "campana-rolmaster-kit.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function triggerCampaignImport() {
+      document.getElementById("campaignImportInput").click();
+    }
+
+    function applyCampaignSnapshot(snapshot) {
+      if (!snapshot || snapshot.app !== "rolmaster-kit") {
+        throw new Error("Archivo de campaña no compatible.");
+      }
+
+      campaignName = typeof snapshot.campaignName === "string" && snapshot.campaignName.trim()
+        ? snapshot.campaignName.trim()
+        : defaultCampaignName;
+
+      const importedForgeState = snapshot.forgeState || {};
+
+      Object.keys(sectionConfig).forEach((section) => {
+        const importedSection = importedForgeState[section] || {};
+        forgeState[section].pinned = Boolean(importedSection.pinned);
+        forgeState[section].current = importedSection.current ? cloneEntry(importedSection.current) : null;
+        forgeState[section].history = Array.isArray(importedSection.history)
+          ? importedSection.history.slice(0, 5).map((entry) => cloneEntry(entry))
+          : [];
+        forgeState[section].favorites = Array.isArray(importedSection.favorites)
+          ? importedSection.favorites.slice(0, 8).map((entry) => cloneEntry(entry))
+          : [];
+
+        if (forgeState[section].current) {
+          const formatter = section === "npcs"
+            ? formatNPCResult
+            : section === "dungeons"
+              ? formatDungeonResult
+              : formatQuestResult;
+          setResult(section, formatter(forgeState[section].current));
+        } else {
+          resetPrimaryResult(section);
+        }
+
+        renderSection(section);
+      });
+
+      const bonus = snapshot.bonus || {};
+      setBonusResult("bonusEncounterResult", bonus.encounter || "");
+      setBonusResult("bonusRumorResult", bonus.rumor || "");
+      setBonusResult("bonusTavernResult", bonus.tavern || "");
+      setBonusResult("bonusSettlementResult", bonus.settlement || "");
+      setBonusResult("bonusFactionResult", bonus.faction || "");
+      setBonusResult("bonusTreasureResult", bonus.treasure || "");
+
+      updateCampaignUI();
+      saveFavoritesToStorage();
+      activateTab(snapshot.activeTab);
+      refreshVisualGallery();
+    }
+
+    function handleCampaignImport(event) {
+      const [file] = event.target.files || [];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const snapshot = JSON.parse(String(reader.result || ""));
+          applyCampaignSnapshot(snapshot);
+          alert("Campaña cargada correctamente.");
+        } catch (error) {
+          alert("No se pudo cargar el archivo JSON de campaña.");
+        } finally {
+          event.target.value = "";
+        }
+      };
+      reader.onerror = () => {
+        alert("No se pudo leer el archivo seleccionado.");
+        event.target.value = "";
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
     function getCampaignSections() {
       const npcText = document.getElementById("npcResult").textContent.trim();
       const dungeonText = document.getElementById("dungeonResult").textContent.trim();
@@ -3581,15 +3731,19 @@
     const tabButtons = document.querySelectorAll(".tab-btn");
     const sections = document.querySelectorAll(".section");
 
+    function activateTab(targetId = "npcs") {
+      tabButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === targetId);
+      });
+
+      sections.forEach((section) => {
+        section.classList.toggle("active", section.id === targetId);
+      });
+    }
+
     tabButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        const targetId = button.dataset.tab;
-
-        tabButtons.forEach((btn) => btn.classList.remove("active"));
-        sections.forEach((section) => section.classList.remove("active"));
-
-        button.classList.add("active");
-        document.getElementById(targetId).classList.add("active");
+        activateTab(button.dataset.tab);
       });
     });
 
@@ -3610,7 +3764,10 @@
       exportTXT,
       exportVisualSVG,
       exportCampaignBundle,
+      exportCampaignJSON,
       exportCampaignHTML,
+      triggerCampaignImport,
+      handleCampaignImport,
       printCampaignSheet,
       refreshVisualGallery,
       exportAllVisuals,
