@@ -2183,7 +2183,7 @@
       }
 
       container.innerHTML = getMetaPills(section, entry)
-        .map((pill) => `<span class="meta-pill"><i class="fa-solid ${pill.icon}"></i>${pill.text}</span>`)
+        .map((pill) => `<span class="meta-pill"><i class="fa-solid ${pill.icon}"></i>${escapeHtml(pill.text)}</span>`)
         .join("");
     }
 
@@ -2200,8 +2200,8 @@
         const summary = getSummary(section, entry);
         return `
           <button class="history-item" onclick="restoreHistory('${section}', ${index})">
-            <strong>${summary.title}</strong>
-            <span>${summary.note}</span>
+            <strong>${escapeHtml(summary.title)}</strong>
+            <span>${escapeHtml(summary.note)}</span>
           </button>
         `;
       }).join("");
@@ -2219,8 +2219,8 @@
       const summary = getSummary(section, state.current);
       container.innerHTML = `
         <div class="history-item" tabindex="-1">
-          <strong>Activo: ${summary.title}</strong>
-          <span>${summary.note}</span>
+          <strong>Activo: ${escapeHtml(summary.title)}</strong>
+          <span>${escapeHtml(summary.note)}</span>
         </div>
         <div class="history-item" tabindex="-1">
           <strong>Estado</strong>
@@ -2246,8 +2246,8 @@
         const summary = getSummary(section, entry);
         return `
           <div class="history-item">
-            <strong>${summary.title}</strong>
-            <span>${summary.note}</span>
+            <strong>${escapeHtml(summary.title)}</strong>
+            <span>${escapeHtml(summary.note)}</span>
             <div class="history-actions">
               <button class="tiny-btn" onclick="restoreFavorite('${section}', ${index})">Restaurar</button>
               <button class="tiny-btn" onclick="removeFavorite('${section}', ${index})">Quitar</button>
@@ -2300,7 +2300,7 @@
 
       container.classList.remove("empty");
       container.innerHTML = `
-        <svg viewBox="0 0 200 200" role="img" aria-label="Retrato procedural del NPC ${entry.name}">
+        <svg viewBox="0 0 200 200" role="img" aria-label="Retrato procedural del NPC ${escapeHtml(entry.name)}">
           <defs>
             <linearGradient id="npcBg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="${palette.bg1}" />
@@ -2415,7 +2415,7 @@
 
       container.classList.remove("empty");
       container.innerHTML = `
-        <svg viewBox="0 0 200 200" role="img" aria-label="Minimapa procedural de la mazmorra ${entry.name}">
+        <svg viewBox="0 0 200 200" role="img" aria-label="Minimapa procedural de la mazmorra ${escapeHtml(entry.name)}">
           <defs>
             <linearGradient id="dungeonBg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="${palette.bg1}" />
@@ -3732,12 +3732,14 @@
     const sections = document.querySelectorAll(".section");
 
     function activateTab(targetId = "npcs") {
+      const nextTab = document.getElementById(targetId) ? targetId : "npcs";
+
       tabButtons.forEach((button) => {
-        button.classList.toggle("active", button.dataset.tab === targetId);
+        button.classList.toggle("active", button.dataset.tab === nextTab);
       });
 
       sections.forEach((section) => {
-        section.classList.toggle("active", section.id === targetId);
+        section.classList.toggle("active", section.id === nextTab);
       });
     }
 
