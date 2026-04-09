@@ -1037,7 +1037,7 @@
       <div class="crest" aria-hidden="true"><i class="fa-solid fa-hammer"></i></div>
       <h1>RolMaster Kit: La Forja del Dungeon Master</h1>
       <p class="subtitle">
-        Una estación de trabajo offline para improvisar personajes, misiones y mazmorras con aire de códice antiguo y mesa de campaña.
+        Kit offline adaptado a Vieja Escuela para forjar aventureros, ruinas, monstruos y expediciones con sabor OSR.
       </p>
       <div class="campaign-bar">
         <span class="campaign-label">Campaña activa</span>
@@ -1065,9 +1065,9 @@
       <section class="section active" id="npcs">
         <article class="card">
           <span class="section-kicker">Forja Social</span>
-          <h2 class="section-title">Generador de NPCs</h2>
+          <h2 class="section-title">Aventureros de Vieja Escuela</h2>
           <p class="section-desc">
-            Prepará un personaje listo para entrar en escena con voz, oficio, ambición y una verdad incómoda escondida bajo la capa.
+            Generá personajes usando raza, clase, atributos, talentos, habilidades y trasfondo al estilo del manual de Vieja Escuela.
           </p>
 
           <div class="controls">
@@ -1082,10 +1082,10 @@
             <button class="mini-btn" onclick="exportVisualSVG('npcPortrait', 'npc-retrato-rolmaster-kit.svg', 'Primero generá un NPC para exportar su retrato.')">Exportar retrato SVG</button>
             <button class="mini-btn" onclick="rerollNPCField('name')">Rehacer nombre</button>
             <button class="mini-btn" onclick="rerollNPCField('race')">Rehacer raza</button>
-            <button class="mini-btn" onclick="rerollNPCField('job')">Rehacer oficio</button>
-            <button class="mini-btn" onclick="rerollNPCField('personality')">Rehacer rasgo</button>
-            <button class="mini-btn" onclick="rerollNPCField('secret')">Rehacer secreto</button>
-            <button class="mini-btn" onclick="rerollNPCField('goal')">Rehacer objetivo</button>
+            <button class="mini-btn" onclick="rerollNPCField('job')">Rehacer clase</button>
+            <button class="mini-btn" onclick="rerollNPCField('personality')">Rehacer trasfondo</button>
+            <button class="mini-btn" onclick="rerollNPCField('secret')">Rehacer talentos</button>
+            <button class="mini-btn" onclick="rerollNPCField('goal')">Rehacer ambición</button>
           </div>
 
           <div class="npc-display">
@@ -1121,9 +1121,9 @@
       <section class="section" id="dungeons">
         <article class="card">
           <span class="section-kicker">Forja de Ruinas</span>
-          <h2 class="section-title">Generador de Mazmorras</h2>
+          <h2 class="section-title">Ruinas y Mazmorras OSR</h2>
           <p class="section-desc">
-            Abrí una puerta sellada y dejá salir salas, guardianes, trampas y tesoros listos para una noche de exploración.
+            Montá una expedición con salas austeras, monstruos del bestiario de Vieja Escuela, trampas letales y botín de exploración.
           </p>
 
           <div class="controls">
@@ -1176,9 +1176,9 @@
       <section class="section" id="quests">
         <article class="card">
           <span class="section-kicker">Forja de Aventuras</span>
-          <h2 class="section-title">Generador de Misiones</h2>
+          <h2 class="section-title">Semillas de Expedición</h2>
           <p class="section-desc">
-            Encendé un conflicto al instante con un gancho atractivo, escenas potentes, giro dramático y una recompensa que valga el viaje.
+            Encendé aventuras de espada y brujería con ganchos peligrosos, escenas de exploración, complicaciones y recompensas de Vieja Escuela.
           </p>
 
           <div class="controls">
@@ -1232,7 +1232,7 @@
           <span class="section-kicker">Archivo del Maestro</span>
           <h2 class="section-title">Recursos Bonus</h2>
           <p class="section-desc">
-            Material complementario simulado para acompañar la sesión con tablas, mapas y ayudas listas para descargar.
+            Herramientas extra para poblar tabernas, caminos, facciones y botines con el tono áspero y aventurero de Vieja Escuela.
           </p>
 
           <div class="controls">
@@ -1288,7 +1288,7 @@
 
           <h3 class="section-title" style="font-size:1.35rem;">Encuentros Rápidos</h3>
           <p class="section-desc">
-            Una chispa adicional para poblar caminos, tabernas y campamentos con tensión inmediata, color local y posibles complicaciones.
+            Encuentros rápidos en rutas, criptas y ruinas con criaturas, reacción, peligro y botín breve al estilo vieja escuela.
           </p>
 
           <div class="controls">
@@ -1315,7 +1315,7 @@
           </div>
 
           <div class="result-frame">
-            <div class="result empty" id="bonusRumorResult"><span><i class="fa-solid fa-mug-hot result-empty-icon"></i>La taberna aún no soltó ningún rumor interesante.</span></div>
+            <div class="result empty" id="bonusRumorResult"><span><i class="fa-solid fa-mug-hot result-empty-icon"></i>Los parroquianos aún no dejaron caer ningún rumor útil.</span></div>
           </div>
 
           <div class="bonus-divider"></div>
@@ -1332,7 +1332,7 @@
           </div>
 
           <div class="result-frame">
-            <div class="result empty" id="bonusTavernResult"><span><i class="fa-solid fa-utensils result-empty-icon"></i>Todavía no se alzó ninguna taberna en el camino.</span></div>
+            <div class="result empty" id="bonusTavernResult"><span><i class="fa-solid fa-utensils result-empty-icon"></i>La posada perfecta todavía no abrió sus puertas.</span></div>
           </div>
 
           <div class="bonus-divider"></div>
@@ -1349,7 +1349,7 @@
           </div>
 
           <div class="result-frame">
-            <div class="result empty" id="bonusSettlementResult"><span><i class="fa-solid fa-tower-observation result-empty-icon"></i>Aún no se levantó ningún asentamiento digno del mapa.</span></div>
+            <div class="result empty" id="bonusSettlementResult"><span><i class="fa-solid fa-tower-observation result-empty-icon"></i>El mapa aún no muestra un nuevo asentamiento.</span></div>
           </div>
 
           <div class="bonus-divider"></div>
@@ -1366,7 +1366,7 @@
           </div>
 
           <div class="result-frame">
-            <div class="result empty" id="bonusFactionResult"><span><i class="fa-solid fa-hand-fist result-empty-icon"></i>Aún no surgió ninguna facción que mueva los hilos.</span></div>
+            <div class="result empty" id="bonusFactionResult"><span><i class="fa-solid fa-hand-fist result-empty-icon"></i>Todavía no emergió ninguna facción en este territorio.</span></div>
           </div>
 
           <div class="bonus-divider"></div>
@@ -1383,7 +1383,7 @@
           </div>
 
           <div class="result-frame">
-            <div class="result empty" id="bonusTreasureResult"><span><i class="fa-solid fa-coins result-empty-icon"></i>Aún no apareció ningún tesoro menor digno de anotarse.</span></div>
+            <div class="result empty" id="bonusTreasureResult"><span><i class="fa-solid fa-coins result-empty-icon"></i>El botín menor todavía no salió a la luz.</span></div>
           </div>
 
           <div class="bonus-grid">
@@ -1397,10 +1397,10 @@
 
             <div class="resource-item">
               <div>
-                <p class="resource-name"><i class="fa-solid fa-map"></i> Mapa de reino fronterizo</p>
-                <p class="resource-meta">Rutas comerciales, fortalezas olvidadas, aldeas y ruinas señaladas para campaña sandbox.</p>
+                <p class="resource-name"><i class="fa-solid fa-map"></i> Mapa de Fronteranorte</p>
+                <p class="resource-meta">Rutas comerciales, fortalezas olvidadas, aldeas y ruinas señaladas para campaña de Vieja Escuela.</p>
               </div>
-              <button class="action-btn secondary" onclick="simulateDownload('Mapa de reino fronterizo')">Descargar</button>
+              <button class="action-btn secondary" onclick="simulateDownload('Mapa de Fronteranorte')">Descargar</button>
             </div>
 
             <div class="resource-item">
@@ -1435,171 +1435,210 @@
     const data = {
       npcs: {
         names: [
-          "Aldric de la Colina", "Mireya Cuervo Blanco", "Thoran Martillo Gris", "Elira Sombraluna",
-          "Brom Barril de Roble", "Selene del Arroyo", "Varik Diente de Lobo", "Ysabel de Hierro",
-          "Darian del Alba", "Nimue del Brezal", "Garruk Piedra Vieja", "Liora Viento Suave",
-          "Cedric Valeforja", "Brunna Escudo Rojo", "Faelan del Bosque Hondo", "Kael Tormenta Baja",
-          "Roswyn Hilandera", "Tiber Hojas Secas", "Maelis Luz de Bronce", "Orin del Puente Viejo"
+          "Alaric de Puertogrís", "Ysenda de Farinoa", "Brun de Aguasnegras", "Miriel de Curias",
+          "Torvald Fronteranorte", "Nara la Roja", "Cedric Landar", "Helga de Robledal",
+          "Esteban Cuervo", "Lysa de la Torre Púrpura", "Orrin de Costabruma", "Beren del Paso Bajo",
+          "Elvira de Salmuera", "Rurik Piedrahonda", "Fausto del Grial Marchito", "Iria Siete Vendas",
+          "Galen de la Marca Gris", "Sabela del Vado", "Hugo del Puerto Viejo", "Mara Rastrofino"
         ],
-        races: ["Humano", "Elfo", "Enano", "Mediano", "Semielfo", "Tiefling"],
-        jobs: [
-          "Herrero ambulante", "Tabernera", "Cazador de recompensas", "Sacerdotisa del amanecer",
-          "Mercader de reliquias", "Capitán de guardia", "Herborista", "Bardo itinerante",
-          "Sepulturero", "Cartógrafa real"
-        ],
+        races: ["Humano", "Elfo", "Enano", "Mediano"],
+        jobs: ["Guerrero", "Hechicero", "Bribón"],
         personalities: [
-          "Cortés pero desconfiado", "Bromista en momentos tensos", "Devoto y solemne", "Ambicioso hasta la obsesión",
-          "Bondadosa con los débiles", "Paranoico por experiencias pasadas", "Orgullosa de su linaje", "Sereno y observador"
+          "soldado en las guerras del norte",
+          "asistente del gran templo de Curias",
+          "custodio en la Gran Biblioteca Púrpura",
+          "cazador de los Kuanda",
+          "pirata en las costas de Landar",
+          "aprendiz de alquimista en una torre aislada",
+          "recaudador al servicio de un señor cruel",
+          "mozo de cuadras en una posada del camino real",
+          "mercader menor arruinado por malas deudas",
+          "guía de caravanas por las rutas de Fronteranorte"
         ],
         secrets: [
-          "Oculta una deuda con un gremio criminal",
-          "Encontró un mapa hacia una tumba prohibida",
-          "Es heredero ilegítimo de una casa noble",
-          "Ha pactado en secreto con una entidad feérica",
-          "Fue responsable de un incendio que devastó una aldea"
+          "Vista Aguda",
+          "Infravisión",
+          "Afín a la Piedra",
+          "Escurridizo",
+          "Certero",
+          "Ímpetu Emprendedor",
+          "Adaptable",
+          "Ataques Múltiples",
+          "Emboscar",
+          "Dedos Ágiles",
+          "Sensibilidad Mágica",
+          "Transferir Esencia"
         ],
         goals: [
-          "Recuperar un objeto familiar robado",
-          "Ascender dentro de su orden o gremio",
-          "Vengar la muerte de un ser querido",
-          "Proteger a alguien que ama en secreto",
-          "Abandonar su pasado y empezar de nuevo"
-        ]
+          "juntar suficiente oro para retirarse con dignidad",
+          "salvar a un familiar atrapado por deudas o juramentos",
+          "recuperar un objeto perdido en una ruina antigua",
+          "ganarse un nombre temido entre aventureros y bandidos",
+          "hallar un mentor, grimorio o reliquia de poder",
+          "levantar una fortaleza o casa propia tras la próxima expedición",
+          "romper una maldición que persigue a su linaje",
+          "cobrar venganza contra un monstruo o señor local"
+        ],
+        skills: ["Alerta", "Comunicación", "Manipulación", "Erudición", "Subterfugio", "Supervivencia"],
+        classCombatStyles: {
+          Guerrero: ["arma de mano y escudo", "dos armas de mano", "armas a dos manos", "armas de proyectiles"],
+          Hechicero: ["bastón y foco arcano", "daga de ritual", "honda y bolsas de componentes"],
+          Bribón: ["daga y capa", "espada corta y daga", "arco corto y cuchillo", "arma de mano y silencio"]
+        },
+        classGear: {
+          Guerrero: ["espada larga, escudo y cota de cuero", "lanza, escudo y raciones de viaje", "hacha de batalla y armadura de cuero", "espada a dos manos y antorchas"],
+          Hechicero: ["bastón, daga y libro de conjuros", "honda, yesca y pedernal, y vendas", "daga, símbolo extraño y espejo de acero", "bastón, saco de dormir y libro de conjuros"],
+          Bribón: ["espada corta, daga y herramientas de ladrón", "arco, daga y cuerda común", "daga, garfio de escalada y saco", "espada corta, palanca y vendas"]
+        },
+        raceTalents: {
+          Elfo: ["Vista Aguda", "Infravisión"],
+          Enano: ["Afín a la Piedra", "Infravisión"],
+          Mediano: ["Escurridizo", "Certero"],
+          Humano: ["Ímpetu Emprendedor", "Adaptable"]
+        },
+        classTalents: {
+          Guerrero: ["Lucha con X", "Ataques Múltiples"],
+          Hechicero: ["Sensibilidad Mágica", "Transferir Esencia"],
+          Bribón: ["Emboscar", "Dedos Ágiles"]
+        }
       },
       dungeons: {
         names: [
-          "Cripta de las Cenizas", "Fortaleza del Cuervo Caído", "Catacumbas del Rey Marchito",
-          "Pozos de Salmuera Negra", "Santuario de la Luna Rota", "Galerías del Hierro Dormido",
-          "Ruinas de Valdoran", "Abismo del Eco Ciego", "Bastión del Liche Errante",
-          "Cuevas del Musgo Carmesí", "Torreón de los Mil Candados", "Templo del Sol Hundido",
-          "Fosas del Gusano Blanco", "Biblioteca Sepultada", "Pasaje de los Juramentos Rotos"
+          "Cripta de Aguasnegras", "Ruinas del Vigía Caído", "Santuario de Piedra Ciega",
+          "Pasadizo de Farinoa", "Tumba del Conde Gris", "Pozos de Curias",
+          "Galerías de Fronteranorte", "Capilla del Cuervo Roto", "Fortín de Salmuera",
+          "Catacumbas del Hierro Viejo", "Cámara de los Sellos Negros", "Pozo del Velo Gris",
+          "Templo Bajo la Colina", "Foso del Gusano Blanco", "Archivo Sepultado"
         ],
         rooms: [
-          "Vestíbulo cubierto de estatuas erosionadas",
-          "Capilla derruida con bancos astillados",
-          "Sala circular con mosaicos arcanos",
-          "Prisión subterránea de barrotes oxidados",
-          "Cámara inundada hasta los tobillos",
-          "Armería saqueada con restos de escudos",
-          "Laboratorio alquímico en ruinas",
-          "Salón del trono cubierto de polvo"
+          "sala con mosaicos gastados y olor a humedad",
+          "cripta lateral repleta de nichos vacíos",
+          "armería saqueada con restos de escudos",
+          "pozo ritual cubierto por cadenas herrumbradas",
+          "archivo de piedra lleno de tablillas rotas",
+          "capilla menor con altar partido",
+          "galería inundada hasta los tobillos",
+          "cámara del guardián con marcas de garras"
         ],
         enemies: [
-          { name: "3 esqueletos guardianes", hp: "12 PV cada uno" },
-          { name: "1 ogro hambriento", hp: "45 PV" },
-          { name: "4 goblins saqueadores", hp: "9 PV cada uno" },
-          { name: "1 espectro encadenado", hp: "38 PV" },
-          { name: "2 arañas gigantes", hp: "26 PV cada una" },
-          { name: "1 sacerdote corrupto", hp: "31 PV" },
-          { name: "5 ratas demoníacas", hp: "6 PV cada una" },
-          { name: "2 armaduras animadas", hp: "33 PV cada una" },
-          { name: "1 troll de caverna", hp: "68 PV" },
-          { name: "1 mímico acechante", hp: "52 PV" }
+          { name: "Araña Gigante", level: 1, damage: "1 pv + veneno", defense: 11, talents: "veneno mortal (Instintos CON 11+)" },
+          { name: "Arpía", level: 3, damage: "1d6", defense: 12, talents: "hechizar con su canción (tirada de Ins)" },
+          { name: "Cieno Gris", level: 3, damage: "2d6", defense: 11, talents: "secreciones ácidas" },
+          { name: "Cubo Gelatinoso", level: 4, damage: "2d4", defense: 11, talents: "inmovilizar y disolver a sus presas" },
+          { name: "Esqueleto", level: 1, damage: "1d6", defense: 11, talents: "inmune a efectos sobre la mente" },
+          { name: "Goblin", level: 1, damage: "1d6", defense: 12, talents: "ninguno" },
+          { name: "Kobold", level: 0, damage: "1d6", defense: 13, talents: "ninguno" },
+          { name: "Necrófago", level: 2, damage: "1d6", defense: 13, talents: "paralizar 1d6 turnos (Instintos FUE 11+)" },
+          { name: "Ogro", level: 4, damage: "1d8+1", defense: 14, talents: "ninguno" },
+          { name: "Orco", level: 2, damage: "1d8+1", defense: 13, talents: "ninguno" },
+          { name: "Rata Gigante", level: 0, damage: "1d4", defense: 10, talents: "transmitir enfermedad (1 entre 10)" },
+          { name: "Trol", level: 6, damage: "1d8", defense: 15, talents: "regenerar 3 pv por asalto salvo fuego o ácido" },
+          { name: "Vampiro", level: 7, damage: "1d10", defense: 17, talents: "absorbe 1d4 CON al herir; muere con luz solar directa" },
+          { name: "Zombi", level: 2, damage: "1d6", defense: 11, talents: "inmune a efectos sobre la mente" }
         ],
         magicItems: [
-          "Anillo de protección menor",
-          "Poción de invisibilidad",
-          "Espada corta ígnea",
-          "Capa del caminante nocturno",
-          "Vara de chispas arcanas",
-          "Amuleto contra maldiciones",
-          "Botas de zancada silenciosa",
-          "Grimorio de conjuros olvidados",
-          "Escudo con runas de guardia",
-          "Gema que ilumina tumbas"
+          "poción de curación envuelta en lino ennegrecido",
+          "pergamino de dormir listo para una sola lectura",
+          "pergamino de detectar magia",
+          "Talismán de la Mente en Blanco",
+          "Espada Danzarina",
+          "vial de agua sagrada sellado con cera",
+          "grimorio con el nombre de un conjuro incompleto",
+          "amuleto hechizado que exige palabra de mando"
         ],
         traps: [
-          "Placas de presión que disparan virotes envenenados",
-          "Foso oculto cubierto con tablas podridas",
-          "Runa explosiva grabada en una puerta sellada",
-          "Estatua que exhala gas somnífero",
-          "Techo inestable que colapsa con ruido intenso"
+          "foso oculto: Instintos DES 11+ para evitar la caída",
+          "dardos envenenados desde la pared: Instintos CON 11+ para resistir el veneno",
+          "glifo o símbolo mágico: Instintos SAB 11+ para apartar la vista a tiempo",
+          "estatua que exhala gas enfermizo: Instintos CON 14+",
+          "mecanismo de piedra que intenta inmovilizar una pierna: Instintos FUE 11+"
         ]
       },
       quests: {
         hooks: [
-          "Un noble menor ofrece oro por rescatar a su heredera desaparecida",
-          "La campana del pueblo suena sola cada medianoche desde el cementerio",
-          "Una caravana enana no llegó jamás al paso de montaña",
-          "Los peces del lago aparecen muertos con símbolos grabados en sus escamas",
-          "Un monasterio pide escolta para una reliquia sagrada",
-          "Un mercader afirma haber visto una ciudad fantasma en la niebla",
-          "La milicia busca discretamente a quien robe un libro prohibido",
-          "Una druida suplica ayuda para detener la tala de un bosque antiguo",
-          "Un niño asegura hablar con un rey enterrado bajo la colina",
-          "Una mina cerrada vuelve a emitir cantos desde sus profundidades"
+          "un familiar del templo de Curias paga por recuperar una reliquia menor",
+          "un mercader arruinado busca escolta para cruzar una ruta infestada de goblins",
+          "un hechicero teme que algo haya despertado bajo una capilla en ruinas",
+          "la guardia de una villa ofrece oro por despejar unas catacumbas viejas",
+          "un viejo mapa señala un pozo sellado que nadie quiso volver a abrir",
+          "una familia noble pide discreción para investigar una cripta profanada",
+          "una posada del camino sufre desapariciones durante la niebla",
+          "unos aldeanos necesitan a alguien que recupere a un niño cerca del molino viejo",
+          "un bribón herido vende a bajo precio la ubicación de un tesoro maldito",
+          "un veterano asegura haber visto luces verdes en una tumba olvidada"
         ],
         scenes: [
-          "Encuentro tenso en una taberna llena de rumores",
-          "Emboscada en un puente derruido",
-          "Negociación con un guardián territorial",
-          "Descubrimiento de un santuario oculto",
-          "Viaje nocturno bajo una tormenta antinatural",
-          "Investigación de huellas y restos extraños",
-          "Asedio breve a una torre o empalizada",
-          "Ritual interrumpido justo antes de completarse"
+          "registro cauteloso de una cámara con antorchas casi agotadas",
+          "negociación tensa con saqueadores o mercenarios de paso",
+          "puerta trabada que obliga a usar fuerza, ingenio o herramientas",
+          "descenso a una galería inundada con ecos inquietantes",
+          "combate breve contra guardianes menores o bestias del subsuelo",
+          "descubrimiento de restos, tablillas o símbolos de mal agüero",
+          "huida apresurada tras activar una trampa o derrumbe",
+          "ritual, conjuro o fenómeno extraño que exige una tirada de Instintos"
         ],
         twists: [
-          "El supuesto villano intentaba contener un mal mayor",
-          "La recompensa prometida fue ofrecida con información falsa",
-          "Uno de los aliados del grupo es un traidor involuntario",
-          "La reliquia buscada está viva o posee voluntad propia",
-          "La amenaza real proviene de alguien considerado héroe local"
+          "el verdadero peligro no custodia el tesoro, sino la salida",
+          "la reliquia buscada exige sacrificio, sintonía o cordura",
+          "quien contrató a los aventureros oculta parte de la verdad",
+          "el monstruo encontrado protege algo peor que él mismo",
+          "la recompensa prometida abre un conflicto con otra facción local"
         ],
         rewards: [
-          "Bolsa con 150 monedas de oro y una carta de recomendación noble",
-          "Título honorífico y acceso a una biblioteca restringida",
-          "Arma bendecida contra criaturas oscuras",
-          "Terreno o casa en la región liberada",
-          "Favor futuro de un gremio poderoso"
-        ]
+          "3d6 x 10 mo en acuñación vieja y una daga bien equilibrada",
+          "un pergamino útil y una bolsa con 25 mo",
+          "agua sagrada, vendas y el favor de un templo local",
+          "herramientas de ladrón finas y 40 mo",
+          "un objeto hechizado menor cuya activación aún debe descubrirse"
+        ],
+        difficulties: ["11+", "14+", "17+", "20+"]
       },
       bonus: {
         locations: [
           "camino boscoso cubierto de niebla",
-          "puente de piedra sobre un arroyo turbulento",
-          "taberna atestada al borde del camino real",
-          "mercado improvisado junto a una muralla en ruinas",
-          "campamento de peregrinos bajo una colina sagrada",
-          "sendero de montaña azotado por viento helado",
-          "clariana usada por leñadores y cazadores",
-          "vado poco profundo con restos de carros viejos"
+          "vado ruinoso en una ruta de caravanas",
+          "cripta abierta por saqueadores recientes",
+          "posada modesta al borde del camino real",
+          "galería minera clausurada desde hace años",
+          "puente de piedra bajo lluvia helada",
+          "campamento improvisado junto a una torre caída",
+          "sendero de colina con viejas tumbas alrededor"
         ],
         groups: [
-          "un grupo de mercenarios cansados pero alerta",
-          "tres bandidos disfrazados de viajeros",
-          "una familia de aldeanos huyendo de algo peor",
-          "un caballero errante con su escudero herido",
-          "una compañía de artistas ambulantes demasiado curiosos",
-          "dos acólitos que escoltan una caja sellada",
-          "un cazador enano cubierto de barro y sangre ajena",
-          "una patrulla local superada por los acontecimientos"
+          "2d4 goblins mal armados pero muy hambrientos",
+          "un necrófago husmeando entre cadáveres viejos",
+          "una banda de saqueadores con antorchas y cuerda",
+          "un ogro solitario con una bolsa de botín reciente",
+          "aldeanos aterrados guiados por un veterano",
+          "acólitos con un pergamino sellado y mala intención",
+          "un bribón herido perseguido por orcos",
+          "una patrulla agotada que perdió a su explorador"
         ],
         tensions: [
-          "buscan ayuda inmediata antes de que anochezca",
-          "discuten por la posesión de un objeto maldito",
-          "ocultan a un fugitivo entre sus pertenencias",
-          "vigilan algo enterrado que intenta salir",
-          "creen que uno de los presentes es un cambiaformas",
-          "quieren contratar espadas pero esconden el verdadero motivo",
-          "han roto un juramento sagrado y temen represalias",
-          "acaban de sobrevivir a una emboscada aún cercana"
+          "vigilan una entrada recién abierta que no quieren compartir",
+          "discuten por quién descenderá primero con la antorcha",
+          "intentan vender un objeto maldito como si fuera valioso",
+          "temen que una criatura siga viva bajo los escombros",
+          "quieren que otros activen la trampa antes que ellos",
+          "esconden una mordedura, maldición o signo de locura",
+          "necesitan auxilio antes de que llegue la noche",
+          "saben que el tesoro hallado no debería salir de allí"
         ],
         twists: [
-          "la amenaza real no está frente al grupo sino detrás de ellos",
-          "uno de los supuestos inocentes es el culpable principal",
-          "el encuentro fue preparado para medir a los aventureros",
-          "el objeto en disputa contiene un mapa vivo",
-          "la autoridad local también forma parte del problema",
-          "la ayuda pedida implica romper una ley del reino"
+          "la criatura principal no está muerta, solo inmóvil",
+          "el botín trae grabada una palabra de mando peligrosa",
+          "la salida más segura exige dejar atrás parte del equipo",
+          "una facción local llega para reclamar la zona",
+          "lo encontrado exige una tirada de Sabiduría para no perder cordura",
+          "el contratista inicial quería carne de cañón, no ayuda verdadera"
         ],
         rewards: [
-          "una bolsa con 2d20 monedas de plata y provisiones",
-          "información precisa sobre una ruina cercana",
-          "un talismán menor de buena fortuna",
-          "pasaje seguro y hospitalidad en la próxima aldea",
-          "el nombre de un contacto valioso en la ciudad",
-          "un cofre pequeño con joyas discretas y una llave extraña"
+          "2d20 monedas de plata, raciones y una cuerda útil",
+          "un mapa incompleto hacia otra ruina",
+          "una poción o pergamino de uso único",
+          "20 mo y hospitalidad en una posada corriente",
+          "herramientas, vendas y equipo recuperado",
+          "un pequeño objeto hechizado de origen dudoso"
         ],
         rumorSources: [
           "un carretero con demasiadas historias para una sola noche",
@@ -1672,7 +1711,7 @@
           "un viudo cordial que recuerda el nombre de todo viajero",
           "dos hermanas gemelas que terminan las frases de la otra",
           "una enana práctica que cobra por adelantado y sin discusión",
-          "un semielfo impecable que sonríe demasiado poco",
+          "un hechicero impecable que sonríe demasiado poco",
           "una anciana curtida que guarda un garrote bajo la barra",
           "un cocinero corpulento que manda más que el dueño",
           "una joven heredera intentando salvar el negocio familiar"
@@ -1894,8 +1933,8 @@
       bonusTreasureResult: '<span><i class="fa-solid fa-gem result-empty-icon"></i>El botín menor todavía no salió a la luz.</span>'
     };
 
-    const storageKey = "rolmaster-kit-favorites-v1";
-    const defaultCampaignName = "Crónicas del Reino Fronterizo";
+    const storageKey = "rolmaster-kit-favorites-v2";
+    const defaultCampaignName = "Crónicas de Vieja Escuela";
     let campaignName = defaultCampaignName;
 
     function pick(list) {
@@ -1912,6 +1951,90 @@
 
     function roll(sides) {
       return Math.floor(Math.random() * sides) + 1;
+    }
+
+    function rollMany(count, sides) {
+      let total = 0;
+      for (let index = 0; index < count; index += 1) total += roll(sides);
+      return total;
+    }
+
+    function getAbilityModifier(score) {
+      if (score === 3) return -2;
+      if (score >= 4 && score <= 6) return -1;
+      if (score >= 15 && score <= 17) return 1;
+      if (score === 18) return 2;
+      return 0;
+    }
+
+    function getMovementForRace(race) {
+      return race === "Enano" || race === "Mediano" ? 9 : 12;
+    }
+
+    function getClassDie(className) {
+      if (className === "Guerrero") return 8;
+      if (className === "Hechicero") return 4;
+      return 6;
+    }
+
+    function getClassTable(className, level) {
+      const tables = {
+        Guerrero: {
+          atq: [0, 1, 1, 2, 2, 3],
+          pod: [0, 0, 0, 0, 0, 0],
+          ins: [1, 2, 3, 4, 5, 6]
+        },
+        Hechicero: {
+          atq: [0, 0, 0, 1, 1, 2],
+          pod: [1, 2, 4, 5, 7, 8],
+          ins: [0, 1, 2, 3, 4, 5]
+        },
+        Bribón: {
+          atq: [0, 0, 1, 1, 2, 2],
+          pod: [0, 0, 0, 0, 0, 0],
+          ins: [0, 1, 2, 3, 4, 5]
+        }
+      };
+      return {
+        atq: tables[className].atq[level - 1],
+        pod: tables[className].pod[level - 1],
+        ins: tables[className].ins[level - 1]
+      };
+    }
+
+    function rollAbilityBlock(className) {
+      const labels = ["FUE", "DES", "CON", "INT", "SAB", "CAR"];
+      const priorities = {
+        Guerrero: ["FUE", "CON", "DES", "SAB", "CAR", "INT"],
+        Hechicero: ["INT", "SAB", "CON", "DES", "CAR", "FUE"],
+        Bribón: ["DES", "CAR", "INT", "CON", "SAB", "FUE"]
+      };
+
+      const rolls = Array.from({ length: 7 }, () => rollMany(3, 6)).sort((left, right) => right - left).slice(0, 6);
+      const assigned = {};
+
+      priorities[className].forEach((label, index) => {
+        assigned[label] = rolls[index];
+      });
+
+      return labels.map((label) => ({
+        label,
+        score: assigned[label],
+        mod: getAbilityModifier(assigned[label])
+      }));
+    }
+
+    function getAbilityValue(abilities, label) {
+      return abilities.find((ability) => ability.label === label);
+    }
+
+    function formatAbilityLine(abilities) {
+      return abilities.map((ability) => `${ability.label} ${ability.score} (${ability.mod >= 0 ? "+" : ""}${ability.mod})`).join(" | ");
+    }
+
+    function rollMonsterHP(level) {
+      if (level <= 0) return roll(4);
+      return Array.from({ length: level }, () => roll(8)).reduce((total, value) => total + value, 0);
     }
 
     function uniquePick(list, used) {
@@ -1995,66 +2118,117 @@
 
     function formatNPCResult(entry) {
       return [
-        "=== NPC GENERADO ===",
+        "=== AVENTURERO DE VIEJA ESCUELA ===",
         `Nombre: ${entry.name}`,
         `Raza: ${entry.race}`,
-        `Oficio: ${entry.job}`,
-        `Personalidad: ${entry.personality}`,
-        `Secreto: ${entry.secret}`,
-        `Objetivo: ${entry.goal}`
+        `Clase: ${entry.job}`,
+        `Nivel: ${entry.level}`,
+        `Trasfondo: ${entry.personality}`,
+        `Ambición: ${entry.goal}`,
+        `Talentos: ${entry.secret}`,
+        `Habilidades: ${entry.skills.join(", ")}`,
+        `Atributos: ${formatAbilityLine(entry.abilities)}`,
+        `MOV: ${entry.mov} | PV: ${entry.pv} | DEF: ${entry.def} | ATQ: +${entry.atq} | INS: +${entry.ins} | POD: ${entry.pod}`,
+        `Equipo: ${entry.equipment}`
       ].join("\n");
     }
 
     function formatDungeonResult(entry) {
       return [
-        "=== MAZMORRA GENERADA ===",
+        "=== RUINA DE VIEJA ESCUELA ===",
         `Nombre: ${entry.name}`,
         `Sala 1: ${entry.rooms[0]}`,
         `Sala 2: ${entry.rooms[1]}`,
         `Sala 3: ${entry.rooms[2]}`,
-        `Enemigo principal: ${entry.enemy.name} (${entry.enemy.hp})`,
-        `Trampa: ${entry.trap}`,
-        "Tesoro:",
-        `- Monedas: ${entry.coins} monedas de oro`,
-        `- Objeto mágico: ${entry.magicItem}`,
-        `- Tirada visible: 1d100 = ${entry.coins}`
+        `Monstruo principal: ${entry.enemy.name} | Niv ${entry.enemy.level} | PV ${entry.enemy.hp} | DEF ${entry.enemy.defense}`,
+        `Ataque: +${entry.enemy.level} | Daño: ${entry.enemy.damage}`,
+        `Talento monstruoso: ${entry.enemy.talents}`,
+        `Trampa o peligro: ${entry.trap}`,
+        `Tesoro en metálico: ${entry.coinsGold} mo, ${entry.coinsSilver} mp y ${entry.coinsCopper} mc`,
+        `Objeto hallado: ${entry.magicItem}`
       ].join("\n");
     }
 
     function formatQuestResult(entry) {
       return [
-        "=== MISIÓN GENERADA ===",
+        "=== SEMILLA DE EXPEDICIÓN ===",
         `Gancho inicial: ${entry.hook}`,
         `Escena 1: ${entry.scenes[0]}`,
         `Escena 2: ${entry.scenes[1]}`,
         `Escena 3: ${entry.scenes[2]}`,
-        `Giro: ${entry.twist}`,
+        `Complicación: ${entry.twist}`,
         `Recompensa: ${entry.reward}`,
-        `Impulso narrativo: 1d6 = ${entry.momentum}`
+        `Dificultad sugerida: ${entry.difficulty}`
       ].join("\n");
     }
 
-    function createNPCEntry() {
+    function cloneAbilities(abilities) {
+      if (!Array.isArray(abilities)) return null;
+      return abilities.map((ability) => ({
+        label: ability.label,
+        score: Number(ability.score) || 0,
+        mod: Number(ability.mod) || 0
+      }));
+    }
+
+    function buildNPCEntry(base = {}) {
+      const race = base.race || pick(data.npcs.races);
+      const job = base.job || pick(data.npcs.jobs);
+      const level = Math.min(6, Math.max(1, base.level || roll(6)));
+      const abilities = cloneAbilities(base.abilities) || rollAbilityBlock(job);
+      const dex = getAbilityValue(abilities, "DES");
+      const con = getAbilityValue(abilities, "CON");
+      const int = getAbilityValue(abilities, "INT");
+      const classTable = getClassTable(job, level);
+      const armorBonus = job === "Guerrero" ? 2 : job === "Bribón" ? 2 : 0;
+      const shieldBonus = job === "Guerrero" && roll(2) === 2 ? 1 : 0;
+      const talents = [...data.npcs.raceTalents[race], ...data.npcs.classTalents[job].map((talent) => talent === "Lucha con X" ? `Lucha con ${pick(data.npcs.classCombatStyles[job])}` : talent)];
+
       return {
         type: "npcs",
-        name: pick(data.npcs.names),
-        race: pick(data.npcs.races),
-        job: pick(data.npcs.jobs),
-        personality: pick(data.npcs.personalities),
-        secret: pick(data.npcs.secrets),
-        goal: pick(data.npcs.goals),
+        name: base.name || pick(data.npcs.names),
+        race,
+        job,
+        level,
+        personality: base.personality || pick(data.npcs.personalities),
+        secret: base.secret || talents.join(", "),
+        goal: base.goal || pick(data.npcs.goals),
+        skills: Array.isArray(base.skills) && base.skills.length ? [...base.skills] : Array.from({ length: 4 }, () => null).map((_, index, array) => {
+          const selected = uniquePick(data.npcs.skills, array.filter(Boolean));
+          array[index] = selected;
+          return selected;
+        }),
+        abilities,
+        mov: typeof base.mov === "number" ? base.mov : getMovementForRace(race),
+        pv: typeof base.pv === "number" ? base.pv : Math.max(1, getClassDie(job) + con.mod + (level - 1) * roll(4)),
+        def: typeof base.def === "number" ? base.def : 10 + dex.mod + armorBonus + shieldBonus,
+        atq: typeof base.atq === "number" ? base.atq : classTable.atq,
+        ins: typeof base.ins === "number" ? base.ins : classTable.ins,
+        pod: typeof base.pod === "number" ? base.pod : Math.max(0, classTable.pod + int.mod),
+        equipment: base.equipment || pick(data.npcs.classGear[job]),
         timestamp: getTimestamp()
       };
     }
 
+    function createNPCEntry() {
+      return buildNPCEntry();
+    }
+
     function createDungeonEntry() {
+      const template = pick(data.dungeons.enemies);
+      const enemy = {
+        ...template,
+        hp: rollMonsterHP(template.level)
+      };
       return {
         type: "dungeons",
         name: pick(data.dungeons.names),
         rooms: generateDistinctRooms(),
-        enemy: pick(data.dungeons.enemies),
+        enemy,
         trap: pick(data.dungeons.traps),
-        coins: roll(100),
+        coinsGold: roll(6) * 10,
+        coinsSilver: rollMany(2, 20),
+        coinsCopper: rollMany(3, 10),
         magicItem: pick(data.dungeons.magicItems),
         timestamp: getTimestamp()
       };
@@ -2067,15 +2241,15 @@
         scenes: generateDistinctScenes(),
         twist: pick(data.quests.twists),
         reward: pick(data.quests.rewards),
-        momentum: roll(6),
+        difficulty: pick(data.quests.difficulties),
         timestamp: getTimestamp()
       };
     }
 
     function getSummary(section, entry) {
       if (section === "npcs") return { title: entry.name, note: `${entry.race} • ${entry.job}` };
-      if (section === "dungeons") return { title: entry.name, note: `${entry.enemy.name} • 1d100=${entry.coins}` };
-      return { title: entry.hook, note: `Giro: ${entry.twist}` };
+      if (section === "dungeons") return { title: entry.name, note: `${entry.enemy.name} • Niv ${entry.enemy.level}` };
+      return { title: entry.hook, note: `Dif.: ${entry.difficulty}` };
     }
 
     function generateDistinctRooms() {
@@ -2109,15 +2283,15 @@
 
       if (section === "dungeons") {
         return [
-          { icon: "fa-dice-d20", text: `Botín 1d100 = ${entry.coins}` },
-          { icon: "fa-skull", text: entry.enemy.hp },
+          { icon: "fa-dice-d20", text: `Botín ${entry.coinsGold} mo` },
+          { icon: "fa-skull", text: `DEF ${entry.enemy.defense}` },
           { icon: "fa-thumbtack", text: forgeState.dungeons.pinned ? "Fijado" : "Libre" }
         ];
       }
 
       return [
         { icon: "fa-scroll", text: `3 escenas activas` },
-        { icon: "fa-dice", text: `Impulso 1d6 = ${entry.momentum}` },
+        { icon: "fa-dice", text: `Dif. ${entry.difficulty}` },
         { icon: "fa-thumbtack", text: forgeState.quests.pinned ? "Fijado" : "Libre" }
       ];
     }
@@ -2133,27 +2307,27 @@
 
     function hasBonusRumorContent() {
       const text = document.getElementById("bonusRumorResult").textContent.trim();
-      return text && !text.includes("La taberna aún no soltó");
+      return text && !text.includes("Los parroquianos aún no dejaron caer ningún rumor útil");
     }
 
     function hasBonusTavernContent() {
       const text = document.getElementById("bonusTavernResult").textContent.trim();
-      return text && !text.includes("Todavía no se alzó ninguna taberna");
+      return text && !text.includes("La posada perfecta todavía no abrió sus puertas");
     }
 
     function hasBonusSettlementContent() {
       const text = document.getElementById("bonusSettlementResult").textContent.trim();
-      return text && !text.includes("Aún no se levantó ningún asentamiento");
+      return text && !text.includes("El mapa aún no muestra un nuevo asentamiento");
     }
 
     function hasBonusFactionContent() {
       const text = document.getElementById("bonusFactionResult").textContent.trim();
-      return text && !text.includes("Aún no surgió ninguna facción");
+      return text && !text.includes("Todavía no emergió ninguna facción en este territorio");
     }
 
     function hasBonusTreasureContent() {
       const text = document.getElementById("bonusTreasureResult").textContent.trim();
-      return text && !text.includes("Aún no apareció ningún tesoro menor");
+      return text && !text.includes("El botín menor todavía no salió a la luz");
     }
 
     function setResult(section, text) {
@@ -2289,10 +2463,10 @@
 
       const headWidth = 54 + (seed % 18);
       const headHeight = 64 + ((seed >> 2) % 16);
-      const earPoint = entry.race === "Elfo" || entry.race === "Semielfo";
+      const earPoint = entry.race === "Elfo";
       const beard = entry.race === "Enano" || ((seed >> 4) % 3 === 0);
-      const horns = entry.race === "Tiefling";
-      const hood = /sacerdotisa|bardo|cartógrafa/i.test(entry.job);
+      const horns = false;
+      const hood = /hechicero/i.test(entry.job);
       const scar = ((seed >> 6) % 4) === 0;
       const hairTall = 20 + ((seed >> 8) % 24);
       const eyeY = 73 + ((seed >> 10) % 4);
@@ -2342,7 +2516,7 @@
         return;
       }
 
-      const seed = hashText(`${entry.name}|${entry.rooms.join("|")}|${entry.enemy.name}|${entry.trap}|${entry.magicItem}|${entry.coins}`);
+      const seed = hashText(`${entry.name}|${entry.rooms.join("|")}|${entry.enemy.name}|${entry.trap}|${entry.magicItem}|${entry.coinsGold}|${entry.coinsSilver}|${entry.coinsCopper}`);
       const palette = {
         bg1: `hsl(${(seed >> 2) % 360} 26% 84%)`,
         bg2: `hsl(${(seed >> 5) % 360} 20% 68%)`,
@@ -2452,7 +2626,7 @@
         return;
       }
 
-      const seed = hashText(`${entry.hook}|${entry.scenes.join("|")}|${entry.twist}|${entry.reward}|${entry.momentum}`);
+      const seed = hashText(`${entry.hook}|${entry.scenes.join("|")}|${entry.twist}|${entry.reward}|${entry.difficulty}`);
       const palette = {
         skyTop: `hsl(${(seed >> 2) % 360} 56% 70%)`,
         skyBottom: `hsl(${(seed >> 5) % 360} 46% 52%)`,
@@ -2464,7 +2638,8 @@
         ink: "rgba(40, 21, 10, 0.78)"
       };
 
-      const skyObject = entry.momentum >= 4
+      const hardQuest = entry.difficulty === "17+" || entry.difficulty === "20+";
+      const skyObject = hardQuest
         ? `<circle cx="154" cy="48" r="22" fill="${palette.glow}" opacity="0.86" />`
         : `<circle cx="150" cy="44" r="18" fill="rgba(246,246,255,0.72)" />`;
 
@@ -2517,7 +2692,7 @@
         `;
       }
 
-      const bannerColor = entry.momentum >= 4 ? palette.glow : palette.accent;
+      const bannerColor = hardQuest ? palette.glow : palette.accent;
 
       container.classList.remove("empty");
       container.innerHTML = `
@@ -2536,7 +2711,7 @@
           <path d="M24 154 Q58 134 92 154" fill="none" stroke="${palette.accent}" stroke-width="4" stroke-linecap="round" opacity="0.65" />
           <path d="M112 150 Q142 126 176 150" fill="none" stroke="${palette.accent}" stroke-width="4" stroke-linecap="round" opacity="0.65" />
           <rect x="18" y="18" width="66" height="18" rx="6" fill="rgba(255,248,231,0.64)" stroke="rgba(61,41,24,0.18)" />
-          <text x="24" y="30" font-family="Cinzel, serif" font-size="9" font-weight="700" fill="${palette.ink}">Impulso 1d6 = ${entry.momentum}</text>
+          <text x="24" y="30" font-family="Cinzel, serif" font-size="9" font-weight="700" fill="${palette.ink}">Dif. sugerida ${entry.difficulty}</text>
           <rect x="98" y="18" width="84" height="18" rx="6" fill="rgba(255,248,231,0.64)" stroke="rgba(61,41,24,0.18)" />
           <text x="104" y="30" font-family="Cinzel, serif" font-size="9" font-weight="700" fill="${bannerColor}">${motif === "relic" ? "Reliquia" : motif === "forest" ? "Bosque" : motif === "grave" ? "Sombras" : motif === "mountain" ? "Cumbres" : "Torre"}</text>
         </svg>
@@ -2618,17 +2793,47 @@
     function rerollNPCField(field) {
       if (!ensureEditable("npcs")) return;
 
-      const entry = { ...forgeState.npcs.current };
-      const map = {
-        name: () => pick(data.npcs.names),
-        race: () => pick(data.npcs.races),
-        job: () => pick(data.npcs.jobs),
-        personality: () => pick(data.npcs.personalities),
-        secret: () => pick(data.npcs.secrets),
-        goal: () => pick(data.npcs.goals)
+      const current = forgeState.npcs.current;
+      const overrides = {
+        name: current.name,
+        race: current.race,
+        job: current.job,
+        personality: current.personality,
+        goal: current.goal,
+        level: current.level,
+        secret: current.secret,
+        skills: [...current.skills],
+        abilities: cloneAbilities(current.abilities),
+        mov: current.mov,
+        pv: current.pv,
+        def: current.def,
+        atq: current.atq,
+        ins: current.ins,
+        pod: current.pod,
+        equipment: current.equipment
       };
 
-      entry[field] = map[field]();
+      if (field === "name") overrides.name = pick(data.npcs.names);
+      if (field === "race") {
+        overrides.race = pick(data.npcs.races);
+        delete overrides.mov;
+        delete overrides.secret;
+      }
+      if (field === "job") {
+        overrides.job = pick(data.npcs.jobs);
+        delete overrides.secret;
+        delete overrides.pv;
+        delete overrides.def;
+        delete overrides.atq;
+        delete overrides.ins;
+        delete overrides.pod;
+        delete overrides.equipment;
+      }
+      if (field === "personality") overrides.personality = pick(data.npcs.personalities);
+      if (field === "goal") overrides.goal = pick(data.npcs.goals);
+      if (field === "secret") delete overrides.secret;
+
+      const entry = buildNPCEntry(overrides);
       entry.timestamp = getTimestamp();
       commitEntry("npcs", entry);
     }
@@ -2644,10 +2849,15 @@
 
       if (field === "name") entry.name = pick(data.dungeons.names);
       if (field === "rooms") entry.rooms = generateDistinctRooms();
-      if (field === "enemy") entry.enemy = pick(data.dungeons.enemies);
+      if (field === "enemy") {
+        const template = pick(data.dungeons.enemies);
+        entry.enemy = { ...template, hp: rollMonsterHP(template.level) };
+      }
       if (field === "trap") entry.trap = pick(data.dungeons.traps);
       if (field === "treasure") {
-        entry.coins = roll(100);
+        entry.coinsGold = roll(6) * 10;
+        entry.coinsSilver = rollMany(2, 20);
+        entry.coinsCopper = rollMany(3, 10);
         entry.magicItem = pick(data.dungeons.magicItems);
       }
 
@@ -2668,7 +2878,7 @@
       if (field === "twist") entry.twist = pick(data.quests.twists);
       if (field === "reward") {
         entry.reward = pick(data.quests.rewards);
-        entry.momentum = roll(6);
+        entry.difficulty = pick(data.quests.difficulties);
       }
 
       entry.timestamp = getTimestamp();
@@ -2861,14 +3071,16 @@
 
     function generateEncounter() {
       const silver = roll(20) + roll(20);
+      const danger = pick(data.quests.difficulties);
       const encounter = [
-        "=== ENCUENTRO RÁPIDO ===",
+        "=== ENCUENTRO DE VIEJA ESCUELA ===",
         `Lugar: ${pick(data.bonus.locations)}`,
-        `Quienes están aquí: ${pick(data.bonus.groups)}`,
-        `Tensión inmediata: ${pick(data.bonus.tensions)}`,
-        `Giro posible: ${pick(data.bonus.twists)}`,
-        `Recompensa potencial: ${pick(data.bonus.rewards).replace("2d20", `${silver}`)}`,
-        `Tirada visible: 2d20 = ${silver}`
+        `Presencia o criatura: ${pick(data.bonus.groups)}`,
+        `Peligro inmediato: ${pick(data.bonus.tensions)}`,
+        `Complicación: ${pick(data.bonus.twists)}`,
+        `Botín rápido: ${pick(data.bonus.rewards).replace("2d20", `${silver}`)}`,
+        `Dificultad sugerida: ${danger}`,
+        `Tirada visible de plata: 2d20 = ${silver}`
       ].join("\n");
 
       const target = document.getElementById("bonusEncounterResult");
@@ -2995,7 +3207,7 @@
 
       const bundle = [
         "ROLMASTER KIT: LA FORJA DEL DUNGEON MASTER",
-        "=== PAQUETE DE CAMPANA ===",
+        "=== PAQUETE DE CAMPANA: VIEJA ESCUELA ===",
         `Fecha de exportacion: ${new Date().toLocaleString("es-AR")}`,
         ""
       ];
@@ -3025,7 +3237,7 @@
     function buildCampaignSnapshot() {
       return {
         app: "rolmaster-kit",
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
         campaignName,
         activeTab: getActiveTabId(),
@@ -3144,17 +3356,17 @@
 
       return [
         {
-          title: "NPC principal",
+          title: "Aventurero principal",
           ready: hasGeneratedContent(npcText, "npcs"),
           text: npcText
         },
         {
-          title: "Mazmorra",
+          title: "Ruina o mazmorra",
           ready: hasGeneratedContent(dungeonText, "dungeons"),
           text: dungeonText
         },
         {
-          title: "Misión",
+          title: "Semilla de expedición",
           ready: hasGeneratedContent(questText, "quests"),
           text: questText
         },
@@ -3245,7 +3457,7 @@
           <rect x="114" y="84" width="736" height="150" rx="26" fill="rgba(255,248,231,0.72)" stroke="rgba(74,48,29,0.28)" stroke-width="3" />
           <text x="150" y="142" fill="${palette.ink}" font-family="Georgia, serif" font-size="26" font-weight="700">RolMaster Kit presenta</text>
           <text x="150" y="200" fill="${palette.ink}" font-family="Georgia, serif" font-size="48" font-weight="700">${escapeHtml(banner)}</text>
-          <text x="150" y="236" fill="${palette.ink}" font-family="Georgia, serif" font-size="22">Forja visual de campaña exportada desde La Forja del Dungeon Master</text>
+          <text x="150" y="236" fill="${palette.ink}" font-family="Georgia, serif" font-size="22">Forja visual de campaña Vieja Escuela exportada desde La Forja del Dungeon Master</text>
         </svg>
       `;
     }
