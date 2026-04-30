@@ -2135,6 +2135,43 @@
               <button class="action-btn secondary" onclick="simulateDownload('Compendio de trampas clásicas')">Descargar</button>
             </div>
           </div>
+
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">📦 Equipo Vieja Escuela</h3>
+          <p class="section-desc">Tablas del Apéndice T del manual. Referencia rápida de armas, armaduras y costes en monedas de oro.</p>
+
+          <h4 style="color:#8f5a1c;font-size:1rem;margin:12px 0 4px">Armas cuerpo a cuerpo</h4>
+          <table class="equipo-table">
+            <thead><tr><th>Arma</th><th>Daño</th><th>Coste</th></tr></thead>
+            <tbody id="equipoMecBody"></tbody>
+          </table>
+
+          <h4 style="color:#8f5a1c;font-size:1rem;margin:12px 0 4px">Armas de proyectiles</h4>
+          <table class="equipo-table">
+            <thead><tr><th>Arma</th><th>Daño</th><th>Disparos/Asalto</th><th>Alcance</th><th>Coste</th></tr></thead>
+            <tbody id="equipoPryBody"></tbody>
+          </table>
+
+          <h4 style="color:#8f5a1c;font-size:1rem;margin:12px 0 4px">Armaduras y Escudo</h4>
+          <table class="equipo-table">
+            <thead><tr><th>Armadura</th><th>Bono</th><th>Coste</th><th>Nota</th></tr></thead>
+            <tbody id="equipoArmorBody"></tbody>
+          </table>
+
+          <p style="font-size:0.82rem;color:rgba(241,230,200,0.6);margin-top:4px">1 mo = 10 mp = 100 mc</p>
+
+          <div class="bonus-divider"></div>
+
+          <h3 class="section-title" style="font-size:1.35rem;">✨ Generador de Objetos Mágicos</h3>
+          <p class="section-desc">Generá pociones, pergaminos y objetos hechizados al estilo VE.</p>
+          <div class="controls">
+            <button class="action-btn" onclick="generateMagicItem()"><i class="fa-solid fa-wand-sparkles"></i> Generar objeto</button>
+            <button class="action-btn secondary" onclick="copyResult('magicItemResult')"><i class="fa-solid fa-copy"></i> Copiar</button>
+            <button class="action-btn secondary" onclick="exportTXT('magicItemResult', 'objeto-magico-ve.txt')"><i class="fa-solid fa-file-arrow-down"></i> Exportar TXT</button>
+          </div>
+          <div class="result empty" id="magicItemResult"><span><i class="fa-solid fa-hat-wizard result-empty-icon"></i>El grimorio aguarda un objeto por revelar.</span></div>
+
         </article>
       </section>
     </section>
@@ -5005,6 +5042,37 @@
       return available.length > 0 ? pick(available) : pick(pool);
     }
 
+    // ===== EQUIPO VE Y OBJETOS MÁGICOS =====
+
+    function renderEquipoTables() {
+      const mecEl = document.getElementById("equipoMecBody");
+      if (mecEl) mecEl.innerHTML = VE_WEAPONS_MEC.map((w) => `<tr><td>${w.nombre}</td><td>${w.daño}</td><td>${w.coste}</td></tr>`).join("");
+      const pryEl = document.getElementById("equipoPryBody");
+      if (pryEl) pryEl.innerHTML = VE_WEAPONS_PRY.map((w) => `<tr><td>${w.nombre}</td><td>${w.daño}</td><td>${w.disparos}</td><td>${w.alcance}</td><td>${w.coste}</td></tr>`).join("");
+      const armEl = document.getElementById("equipoArmorBody");
+      if (armEl) armEl.innerHTML = VE_ARMOR.map((a) => `<tr><td>${a.nombre}</td><td>${a.bono}</td><td>${a.coste}</td><td style="font-size:0.78rem;color:rgba(241,230,200,0.65)">${a.nota}</td></tr>`).join("");
+    }
+
+    function generateMagicItem() {
+      const type = roll(3);
+      let result = "";
+      if (type === 1) {
+        const effect = pick(VE_POTION_EFFECTS);
+        result = `=== POCIÓN MÁGICA ===\nApariencia: líquido ${pick(["rojo rubí","verde esmeralda","dorado","negro como la noche","plateado","azul cobalto"])} en frasco sellado con lacre.\nEfecto: ${effect}\nNota: Un solo uso. Se agota al beber.`;
+      } else if (type === 2) {
+        const spell = pick(VE_SPELLS);
+        const minLevel = 1 + Math.floor(roll(6) / 2);
+        result = `=== PERGAMINO MÁGICO ===\nConjuro: ${spell}\nNivel mínimo para activar: ${minLevel}\nEstado: ${pick(["enrollado en cuero ennegrecido","sellado con cera roja","atado con hilo de plata","dentro de un tubo de hueso"])}\nNota: Solo Hechiceros (o Bribones con Leer Magia) pueden activarlo.`;
+      } else {
+        const itemName = pick(VE_ITEM_NAMES);
+        const diff = pick(["11+","14+","17+"]);
+        const sacrifice = roll(4) === 1 ? `Sacrificio: pierde 1 punto de ${pick(["INT","SAB","CAR","FUE"])} al sintonizar.` : "";
+        const command = roll(3) === 1 ? `Palabra de mando: "${pick(["Umbra","Valethor","Calyx","Nidris","Orm","Skel"])}"` : "No requiere palabra de mando.";
+        result = `=== OBJETO HECHIZADO ===\nNombre: ${itemName}\nSintonización: ${diff} (tirada de Carisma, 1 intento/día)\n${sacrifice}${sacrifice ? "\n" : ""}${command}\nPoder: ${pick(["Otorga +1 ATQ mientras se lleve encima","Protege contra efectos mentales (INS con ventaja)","Ilumina 10 metros a voluntad","Permite ver lo invisible una vez al día","Llama a un familiar menor al tacto","Susurra el nombre del último ser que lo tocó"])}`;
+      }
+      setBonusResult("magicItemResult", result);
+    }
+
     function renderBestiary() {
       const el = document.getElementById("bestiaryGrid");
       if (!el) return;
@@ -5469,6 +5537,7 @@
       rollCritical, rollFumble, rollQuickInstinct,
       renderCombatList, renderTurnIndicator, addRandomMonsterToCombat,
       renderBestiary, quickAddMonsterToCombat, generateRandomMonster,
+      generateMagicItem,
     });
 
     loadFavoritesFromStorage();
@@ -5477,6 +5546,7 @@
     renderSection("dungeons");
     renderSection("quests");
     renderBestiary();
+    renderEquipoTables();
   </script>
 </body>
 </html>
