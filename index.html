@@ -2653,6 +2653,153 @@
     const defaultCampaignName = "Crónicas de Vieja Escuela";
     let campaignName = defaultCampaignName;
 
+    // ===== DATOS VIEJA ESCUELA =====
+
+    const VE_RACES = {
+      Elfo:    { mov: 12, talentos: ["Vista Aguda", "Infravisión"], desc: "Ventaja en Alerta visual. Infravisión 20 m." },
+      Enano:   { mov: 9,  talentos: ["Afín a la Piedra", "Infravisión"], desc: "Ventaja en Erudición sobre piedra. Infravisión 20 m." },
+      Mediano: { mov: 9,  talentos: ["Escurridizo", "Certero"], desc: "Ventaja en Subterfugio. +1 en proyectiles." },
+      Humano:  { mov: 12, talentos: ["Ímpetu Emprendedor", "Adaptable"], desc: "Trasfondo adicional. +1 a Instintos." }
+    };
+
+    const VE_CLASSES = {
+      Guerrero:  { da: 8,  talentos: ["Lucha con X", "Ataques Múltiples"], armas: "Cualquier arma y armadura.", desc: "Al abatir podés encadenar más ataques." },
+      Hechicero: { da: 4,  talentos: ["Sensibilidad Mágica", "Transferir Esencia"], armas: "Solo dagas, bastones y hondas. Sin armadura.", desc: "Lanzás conjuros gastando Pod. Convertís 3 PV en 1 Pod." },
+      Bribón:    { da: 6,  talentos: ["Emboscar", "Dedos Ágiles"], armas: "Cualquier arma, solo armadura de cuero.", desc: "Ventaja en Subterfugio. +1d6 al atacar desprevenidos." }
+    };
+
+    const VE_SKILLS_LIST = ["Alerta", "Comunicación", "Manipulación", "Erudición", "Subterfugio", "Supervivencia"];
+
+    const VE_TRASFONDOS = [
+      "soldado en las guerras del norte", "asistente del gran templo de Curias",
+      "custodio en la Gran Biblioteca Púrpura", "cazador de los Kuanda",
+      "pirata en las costas de Landar", "herrero itinerante con deudas en tres ciudades",
+      "aprendiz de mago que huyó de su maestro", "mercader en quiebra que perdió su caravana",
+      "explorador de ruinas que sobrevivió de milagro", "fraile expulsado por preguntar demasiado",
+      "ladrón reformado que todavía no se siente a salvo", "guardia de ciudad que vio algo que no debía"
+    ];
+
+    const VE_BESTIARY = [
+      { nombre: "Araña Gigante", nivel: 1,  def: 11, daño: "1 pv + veneno", talentos: "Veneno mortal (INS CON 11+)" },
+      { nombre: "Arpía",         nivel: 3,  def: 12, daño: "1d6",           talentos: "Hechizar con su canción (tirada INS)" },
+      { nombre: "Cieno Gris",    nivel: 3,  def: 11, daño: "2d6",           talentos: "Secreciones ácidas" },
+      { nombre: "Cubo Gelatinoso",nivel:4,  def: 11, daño: "2d4",           talentos: "Inmovilizar y disolver a sus presas" },
+      { nombre: "Doppelganger",  nivel: 4,  def: 14, daño: "1d12",          talentos: "Copiar la apariencia de otros" },
+      { nombre: "Dragón Negro",  nivel: 6,  def: 17, daño: "2 garras 1d6 + mordisco 2d10", talentos: "Aliento ácido 4d6 (INS DES mitad)" },
+      { nombre: "Dragón Verde",  nivel: 7,  def: 17, daño: "2 garras 1d6 + mordisco 2d10", talentos: "Aliento gaseoso 3d8 (INS DES mitad)" },
+      { nombre: "Dragón Blanco", nivel: 8,  def: 17, daño: "2 garras 1d6 + mordisco 2d10", talentos: "Aliento escarcha 2d12 (INS DES mitad)" },
+      { nombre: "Dragón Azul",   nivel: 9,  def: 17, daño: "2 garras 1d6 + mordisco 2d10", talentos: "Aliento rayo 4d8 (INS DES mitad)" },
+      { nombre: "Dragón Rojo",   nivel: 10, def: 17, daño: "2 garras 1d6 + mordisco 2d10", talentos: "Aliento fuego 6d6 (INS DES mitad)" },
+      { nombre: "Esqueleto",     nivel: 1,  def: 11, daño: "1d6",           talentos: "Inmune a efectos sobre la mente" },
+      { nombre: "Goblin",        nivel: 1,  def: 12, daño: "1d6",           talentos: "—" },
+      { nombre: "Kobold",        nivel: 0,  def: 13, daño: "1d6",           talentos: "—" },
+      { nombre: "Necrófago",     nivel: 2,  def: 13, daño: "1d6",           talentos: "Paralizar 1d6 turnos (INS FUE 11+)" },
+      { nombre: "Ogro",          nivel: 4,  def: 14, daño: "1d8+1",         talentos: "—" },
+      { nombre: "Orco",          nivel: 2,  def: 13, daño: "1d8+1",         talentos: "—" },
+      { nombre: "Rata Gigante",  nivel: 0,  def: 10, daño: "1d4",           talentos: "Enfermedad (1 en 10)" },
+      { nombre: "Trol",          nivel: 6,  def: 15, daño: "1d8",           talentos: "Regenerar 3 pv/asalto (salvo fuego o ácido)" },
+      { nombre: "Vampiro",       nivel: 7,  def: 17, daño: "1d10",          talentos: "Absorbe 1d4 CON permanente. Muere con luz solar directa." },
+      { nombre: "Zombi",         nivel: 2,  def: 11, daño: "1d6",           talentos: "Inmune a efectos sobre la mente" }
+    ];
+
+    const VE_MONSTER_PREFIXES = ["Antiguo","Corrompido","Sombrío","Sagrado","Errante","Salvaje","Eterno","Maldito","Plateado","Carmesí"];
+    const VE_MONSTER_NOUNS    = ["Guardián","Devorador","Centinela","Acechador","Señor","Espectro","Coloso","Azote","Portador","Caminante"];
+    const VE_MONSTER_TALENTS_POOL = [
+      "veneno letal (INS CON 14+)","regenerar 2 pv/asalto","inmune a armas no mágicas",
+      "parálisis al contacto (INS FUE 11+)","invisibilidad a voluntad","aliento ardiente 2d6",
+      "dominar mente (INS CAR 14+)","drenar nivel (INS SAB 17+)","aura de miedo (INS SAB 11+)",
+      "camuflaje perfecto (Subterfugio 14+ para detectar)","doble ataque por asalto","piel de piedra DEF +3"
+    ];
+
+    const VE_CRITICAL_EFFECTS = [
+      "Daño máximo +1 (efecto especial a elección del atacante)",
+      "El blanco pierde una pieza de equipo (arma o escudo)",
+      "La armadura del blanco se daña: −1 DEF por el resto del combate",
+      "El próximo ataque contra el blanco se realiza con ventaja",
+      "El blanco pierde su próximo ataque",
+      "El blanco es desplazado de su posición actual"
+    ];
+
+    const VE_WEAPONS_MEC = [
+      { nombre: "Hacha de Batalla", daño: "1d8",   coste: "5 mo" },
+      { nombre: "Porra",            daño: "1d4",   coste: "0 mo" },
+      { nombre: "Daga",             daño: "1d4",   coste: "2 mo" },
+      { nombre: "Martillo de Guerra",daño: "1d4+1",coste: "1 mo" },
+      { nombre: "Maza Pesada",      daño: "1d6",   coste: "10 mo" },
+      { nombre: "Lanza",            daño: "1d6",   coste: "1 mo" },
+      { nombre: "Bastón (2 manos)", daño: "1d6",   coste: "0 mo" },
+      { nombre: "Espada Larga",     daño: "1d8",   coste: "15 mo" },
+      { nombre: "Espada Corta",     daño: "1d6",   coste: "8 mo" },
+      { nombre: "Espada a 2 manos", daño: "1d10",  coste: "30 mo" }
+    ];
+
+    const VE_WEAPONS_PRY = [
+      { nombre: "Arco",            daño: "1d6",   disparos: 2, alcance: "60 m",  coste: "15 mo" },
+      { nombre: "Ballesta ligera", daño: "1d4+1", disparos: 1, alcance: "70 m",  coste: "12 mo" },
+      { nombre: "Daga (lanzada)",  daño: "1d4",   disparos: 1, alcance: "4 m",   coste: "2 mo" },
+      { nombre: "Honda",           daño: "1d4",   disparos: 1, alcance: "20 m",  coste: "2 mp" },
+      { nombre: "Lanza (lanzada)", daño: "1d6",   disparos: 1, alcance: "8 m",   coste: "1 mo" }
+    ];
+
+    const VE_ARMOR = [
+      { nombre: "Cuero",   bono: "+2 DEF", coste: "5 mo",   nota: "" },
+      { nombre: "Anillos", bono: "+3 DEF", coste: "30 mo",  nota: "" },
+      { nombre: "Mallas",  bono: "+4 DEF", coste: "75 mo",  nota: "" },
+      { nombre: "Placas",  bono: "+6 DEF", coste: "100 mo", nota: "MOV máx 6. Penalización sobrecarga." },
+      { nombre: "Escudo",  bono: "+1 DEF", coste: "15 mo",  nota: "" }
+    ];
+
+    const VE_SPELLS = [
+      "Detectar Magia","Curar Heridas","Dormir","Escudo","Hechizar Persona",
+      "Leer Idiomas","Leer Magia","Luz","Protección contra el Mal",
+      "Proyectil Ácido","Cerradura","Detectar Invisibilidad","Detectar el Mal",
+      "Levitar","Localizar Objeto","Leer Mente","Bola de Fuego","Eliminar Maldición"
+    ];
+
+    const VE_POTION_EFFECTS = [
+      "Curación: recupera 1d6+1 pv al beber",
+      "Curación mayor: recupera 2d6+2 pv al beber",
+      "Veneno: INS CON 14+ o muere en 1d6 asaltos (parece idéntica a una poción de curación)",
+      "Invisibilidad: dura 1d6 turnos (10 min c/u)",
+      "Resistencia: +2 DEF durante 1 combate",
+      "Fuerza: +2 ATQ y daño durante 1 combate",
+      "Velocidad: doble MOV y un ataque extra durante 1 combate",
+      "Vuelo: volar MOV 18 durante 1d6 turnos",
+      "Agua Sagrada: 1d8 daño vs muertos vivientes y demonios",
+      "Aliento de Fuego: puede escupir fuego 1d6 daño 3× (pero INS CON 17+ o 1d4 daño propio)"
+    ];
+
+    const VE_ITEM_NAMES = [
+      "Ojo del Oráculo","Llave de los Vientos","Brazal del Guardián","Capucha del Caminante",
+      "Sello del Umbral","Filo del Juramento","Copa de las Sombras","Cinturón del Titán",
+      "Máscara del Doble","Anillo del Olvidado","Gema del Silencio","Manto de la Madrugada"
+    ];
+
+    // Estado del PJ en construcción
+    let pjState = {
+      rolledValues: [],
+      attributes: { FUE: null, DES: null, CON: null, INT: null, SAB: null, CAR: null },
+      race: null,
+      className: null,
+      skills: { Alerta: 0, Comunicación: 0, Manipulación: 0, Erudición: 0, Subterfugio: 0, Supervivencia: 0 },
+      trasfondo: ""
+    };
+
+    // Estado del combate
+    let combatState = {
+      combatants: [],
+      currentIndex: -1,
+      round: 0,
+      started: false
+    };
+
+    // Estado del tirador de dados
+    let selectedDiceSides = 4;
+    let diceHistoryArr = [];
+
+    // Estado del monstruo generado
+    let lastGeneratedMonster = null;
+
     function pick(list) {
       return list[Math.floor(Math.random() * list.length)];
     }
@@ -4656,6 +4803,20 @@
       alert("Este recurso se incluye en la versión completa");
     }
 
+    function activateMesaTab(targetId) {
+      document.querySelectorAll(".mesa-tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.mesa === targetId);
+      });
+      document.querySelectorAll(".mesa-section").forEach((sec) => {
+        sec.classList.toggle("active", sec.id === "mesa-" + targetId);
+      });
+    }
+
+    document.addEventListener("click", function(e) {
+      const btn = e.target.closest(".mesa-tab-btn");
+      if (btn) activateMesaTab(btn.dataset.mesa);
+    });
+
     // Sistema simple de pestañas para mantener la experiencia en una sola página.
     const tabButtons = document.querySelectorAll(".tab-btn");
     const sections = document.querySelectorAll(".section");
@@ -4720,7 +4881,8 @@
       generateMinorTreasure,
       copyBonusTreasure,
       exportBonusTreasure,
-      simulateDownload
+      simulateDownload,
+      activateMesaTab
     });
 
     loadFavoritesFromStorage();
