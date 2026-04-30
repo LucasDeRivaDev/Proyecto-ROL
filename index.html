@@ -2782,7 +2782,8 @@
       race: null,
       className: null,
       skills: { Alerta: 0, Comunicación: 0, Manipulación: 0, Erudición: 0, Subterfugio: 0, Supervivencia: 0 },
-      trasfondo: ""
+      trasfondo: "",
+      monedas: null
     };
 
     // Estado del combate
@@ -4819,7 +4820,12 @@
       const rolls = Array.from({ length: 7 }, () => rollMany(3, 6));
       const min = Math.min(...rolls);
       let minMarked = false;
-      pjState.rolledValues = rolls.map((v) => ({ value: v, isLowest: !minMarked && v === min ? (minMarked = true) : false, used: !minMarked && v === min }));
+      pjState.rolledValues = rolls.map((v) => {
+        const lowest = !minMarked && v === min;
+        if (lowest) minMarked = true;
+        return { value: v, isLowest: lowest, used: lowest };
+      });
+      pjState.monedas = null;
       // reset attributes
       Object.keys(pjState.attributes).forEach((k) => { pjState.attributes[k] = null; });
       pjRenderRolledValues();
@@ -4976,7 +4982,8 @@
       const trasfondo = document.getElementById("pjTrasfondoInput")?.value || "—";
       pjState.trasfondo = trasfondo;
       const allTalentos = [...race.talentos, ...cls.talentos].join(", ");
-      const monedas = rollMany(3, 6) * 10;
+      if (!pjState.monedas) pjState.monedas = rollMany(3, 6) * 10;
+      const monedas = pjState.monedas;
 
       const block = document.getElementById("pjSummaryBlock");
       block.innerHTML = `
