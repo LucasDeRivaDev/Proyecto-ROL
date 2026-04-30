@@ -5006,6 +5006,173 @@
       block.dataset.textContent = `=== PERSONAJE VIEJA ESCUELA ===\nRaza: ${pjState.race}\nClase: ${pjState.className} | Nivel 1\nAtributos: ${Object.entries(attrs).map(([k,v]) => `${k} ${v}`).join(" | ")}\nPV: ${Math.max(1,pv)} | DEF: ${def} | ATQ: +${tbl.atq} | INS: +${tbl.ins} | POD: ${Math.max(0,tbl.pod+mod("INT"))} | MOV: ${mov}\nHabilidades: ${skillsList}\nTalentos: ${allTalentos}\nTrasfondo: ${trasfondo}\nMonedas: ${monedas} mo`;
     }
 
+    // ===== RASTREADOR DE COMBATE =====
+
+    function addCombatant() {
+      const name = document.getElementById("combatName").value.trim();
+      const des  = parseInt(document.getElementById("combatDES").value) || 10;
+      const def  = parseInt(document.getElementById("combatDEF").value) || 10;
+      const pv   = parseInt(document.getElementById("combatPV").value) || 8;
+      const isPJ = document.getElementById("combatIsPJ").checked;
+      if (!name) return;
+      combatState.combatants.push({ name, des, def, pvMax: pv, pvCurrent: pv, isPJ, fallen: false, guardOpen: false });
+      document.getElementById("combatName").value = "";
+      document.getElementById("combatDES").value = "";
+      document.getElementById("combatDEF").value = "";
+      document.getElementById("combatPV").value  = "";
+      document.getElementById("combatIsPJ").checked = false;
+      renderCombatList();
+    }
+
+    function startCombat() {
+      combatState.combatants.sort((a, b) => b.des - a.des);
+      combatState.currentIndex = 0;
+      combatState.round = 1;
+      combatState.started = true;
+      renderCombatList();
+      renderTurnIndicator();
+    }
+
+    function nextTurn() {
+      if (!combatState.started || combatState.combatants.length === 0) return;
+      combatState.combatants[combatState.currentIndex].guardOpen = false;
+      let next = (combatState.currentIndex + 1) % combatState.combatants.length;
+      let loops = 0;
+      while (combatState.combatants[next].fallen && loops < combatState.combatants.length) {
+        next = (next + 1) % combatState.combatants.length;
+        loops++;
+      }
+      if (next <= combatState.currentIndex) combatState.round++;
+      combatState.currentIndex = next;
+      renderCombatList();
+      renderTurnIndicator();
+    }
+
+    function resetCombat() {
+      combatState = { combatants: [], currentIndex: -1, round: 0, started: false };
+      renderCombatList();
+      document.getElementById("combatTurnIndicator").innerHTML = "";
+    }
+
+    function applyDamage(index, amount) {
+      const c = combatState.combatants[index];
+      if (!c || c.fallen) return;
+      c.pvCurrent = Math.max(0, c.pvCurrent - amount);
+      if (c.pvCurrent <= 0) c.fallen = true;
+      renderCombatList();
+    }
+
+    function applyHeal(index, amount) {
+      const c = combatState.combatants[index];
+      if (!c) return;
+      c.pvCurrent = Math.min(c.pvMax, c.pvCurrent + amount);
+      if (c.pvCurrent > 0) c.fallen = false;
+      renderCombatList();
+    }
+
+    function applyBandage(index) {
+      applyHeal(index, roll(4));
+    }
+
+    function applyCustomDmg(index) {
+      const input = document.getElementById("dmgInput-" + index);
+      const val = parseInt(input?.value) || 0;
+      if (val > 0) applyDamage(index, val);
+      else if (val < 0) applyHeal(index, Math.abs(val));
+      if (input) input.value = "";
+    }
+
+    function removeCombatant(index) {
+      combatState.combatants.splice(index, 1);
+      if (combatState.currentIndex >= combatState.combatants.length) combatState.currentIndex = 0;
+      renderCombatList();
+    }
+
+    function rollCritical() {
+      const effect = pick(VE_CRITICAL_EFFECTS);
+      setBonusResult("criticalResult", `⚔️ Crítico (20 natural)\n${effect}`);
+      addDiceHistory(`Crítico: ${effect}`);
+    }
+
+    function rollFumble() {
+      const idx = combatState.currentIndex;
+      if (idx >= 0 && combatState.combatants[idx]) {
+        combatState.combatants[idx].guardOpen = true;
+        renderCombatList();
+      }
+      setBonusResult("criticalResult", "💀 Pifia (1 natural)\nEl combatiente quedó con la guardia abierta. Todos los ataques contra él tienen ventaja hasta su próximo turno.");
+    }
+
+    function rollQuickInstinct(index) {
+      const c = combatState.combatants[index];
+      if (!c) return;
+      const d20 = roll(20);
+      const total = d20;
+      addDiceHistory(`Instintos rápido (${c.name}): d20 = ${d20} vs 11+: ${total >= 11 ? "ÉXITO" : "FALLO"}`);
+      alert(`Instintos de ${c.name}: d20 = ${d20} vs 11+ → ${total >= 11 ? "✓ ÉXITO" : "✗ FALLO"}`);
+    }
+
+    function renderCombatList() {
+      const el = document.getElementById("combatantList");
+      if (!el) return;
+      if (combatState.combatants.length === 0) {
+        el.innerHTML = `<p style="font-size:0.85rem;color:rgba(241,230,200,0.6);text-align:center;padding:16px">Agregá combatientes para comenzar.</p>`;
+        return;
+      }
+      el.innerHTML = combatState.combatants.map((c, i) => {
+        const pct = Math.max(0, (c.pvCurrent / c.pvMax) * 100);
+        const isActive = combatState.started && i === combatState.currentIndex;
+        const barClass = pct <= 33 ? "hp-bar low" : "hp-bar";
+        return `
+          <div class="combatant-row ${isActive ? "active-turn" : ""} ${c.fallen ? "fallen" : ""}">
+            <div>
+              <div class="combatant-name">${isActive ? "▶ " : ""}${c.name} ${c.isPJ ? "🛡" : "👹"} ${c.guardOpen ? "⚠️ guardia abierta" : ""} ${c.fallen ? "💀 CAÍDO" : ""}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <div class="hp-bar-wrap"><div class="${barClass}" style="width:${pct}%"></div></div>
+                <span class="combatant-hp">${c.pvCurrent}/${c.pvMax} PV &nbsp; DEF ${c.def} &nbsp; DES ${c.des}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+              <button class="mini-btn" onclick="applyDamage(${i}, 1)">−1</button>
+              <button class="mini-btn" onclick="applyDamage(${i}, 5)">−5</button>
+              <input type="number" id="dmgInput-${i}" class="combat-dmg-input" placeholder="±dmg" />
+              <button class="mini-btn" onclick="applyCustomDmg(${i})">OK</button>
+              <button class="mini-btn" onclick="applyBandage(${i})">+1d4 ⛑</button>
+            </div>
+            <button class="mini-btn" onclick="rollQuickInstinct(${i})">INS</button>
+            <button class="mini-btn" onclick="removeCombatant(${i})" style="color:#ff9090">✕</button>
+          </div>`;
+      }).join("");
+    }
+
+    function renderTurnIndicator() {
+      const el = document.getElementById("combatTurnIndicator");
+      if (!el) return;
+      if (!combatState.started) { el.innerHTML = ""; return; }
+      const c = combatState.combatants[combatState.currentIndex];
+      el.innerHTML = `
+        <div class="turn-indicator">
+          <i class="fa-solid fa-swords"></i>
+          Asalto ${combatState.round} &nbsp;|&nbsp; Turno: ${c ? c.name : "—"}
+        </div>
+        <div class="subcontrols">
+          <button class="mini-btn" onclick="rollCritical()">🎯 Crítico (20)</button>
+          <button class="mini-btn" onclick="rollFumble()">💥 Pifia (1)</button>
+        </div>
+        <div class="result" id="criticalResult" style="margin:8px 0;min-height:40px"></div>`;
+    }
+
+    function addRandomMonsterToCombat() {
+      if (!lastGeneratedMonster) return;
+      const m = lastGeneratedMonster;
+      combatState.combatants.push({
+        name: m.nombre, des: 10, def: m.def,
+        pvMax: m.pv, pvCurrent: m.pv, isPJ: false, fallen: false, guardOpen: false
+      });
+      renderCombatList();
+      activateMesaTab("combate");
+    }
+
     // ===== TIRADOR DE DADOS VE =====
 
     function selectDice(sides) {
@@ -5254,6 +5421,10 @@
       pjExportSheet,
       selectDice, rollDiceVE, rollWithAdvantage, rollWithDisadvantage,
       rollInstintos, clearDiceHistory,
+      addCombatant, startCombat, nextTurn, resetCombat,
+      applyDamage, applyHeal, applyBandage, applyCustomDmg, removeCombatant,
+      rollCritical, rollFumble, rollQuickInstinct,
+      renderCombatList, renderTurnIndicator, addRandomMonsterToCombat,
     });
 
     loadFavoritesFromStorage();
