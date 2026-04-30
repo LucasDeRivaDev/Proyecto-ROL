@@ -247,7 +247,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
       padding: 18px 16px 8px;
     }
@@ -1570,6 +1570,7 @@
       <button class="tab-btn active" data-tab="npcs"><i class="fa-solid fa-user-astronaut"></i> NPCs</button>
       <button class="tab-btn" data-tab="dungeons"><i class="fa-solid fa-dungeon"></i> Mazmorras</button>
       <button class="tab-btn" data-tab="quests"><i class="fa-solid fa-scroll"></i> Misiones</button>
+      <button class="tab-btn" data-tab="mesa"><i class="fa-solid fa-dice-d20"></i> Mesa VE</button>
       <button class="tab-btn" data-tab="bonus"><i class="fa-solid fa-gem"></i> Bonus</button>
     </nav>
 
@@ -1736,6 +1737,209 @@
               <div class="history-list" id="questFavorites"></div>
             </div>
           </div>
+        </article>
+      </section>
+
+      <section class="section" id="mesa">
+        <article class="card">
+          <span class="section-kicker">Herramientas de Mesa</span>
+          <h2 class="section-title">Mesa VE</h2>
+          <p class="section-desc">
+            Herramientas para usar Vieja Escuela en mesa: creá personajes, tirá dados, rastreá combate y consultá el bestiario.
+          </p>
+
+          <div class="mesa-tabs">
+            <button class="mesa-tab-btn active" data-mesa="pj">🧙 Personaje</button>
+            <button class="mesa-tab-btn" data-mesa="dados">🎲 Dados</button>
+            <button class="mesa-tab-btn" data-mesa="combate">⚔️ Combate</button>
+            <button class="mesa-tab-btn" data-mesa="bestiario">🐉 Bestiario</button>
+          </div>
+
+          <!-- SECCIÓN PJ -->
+          <div class="mesa-section active" id="mesa-pj">
+            <div id="pj-step-1" class="pj-step active">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 1 — Atributos</h3>
+              <p class="section-desc">Tirá 3d6 siete veces. El valor más bajo se descarta automáticamente. Asigná los seis restantes a tus atributos.</p>
+              <div class="controls">
+                <button class="action-btn" onclick="pjRollAttributes()"><i class="fa-solid fa-dice"></i> Tirar 3d6 ×7</button>
+                <button class="action-btn secondary" id="pjAutoAssignBtn" onclick="pjAutoAssign()" style="display:none">Asignar automáticamente</button>
+              </div>
+              <div class="rolled-values" id="pjRolledValues"></div>
+              <div class="attr-grid" id="pjAttrGrid"></div>
+              <div class="pj-step-nav">
+                <button class="action-btn" onclick="pjGoStep(2)" id="pjStep1Next" style="display:none">Siguiente →</button>
+              </div>
+            </div>
+
+            <div id="pj-step-2" class="pj-step">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 2 — Raza</h3>
+              <p class="section-desc">Elegí la raza de tu aventurero. Cada una otorga talentos y movimiento distintos.</p>
+              <div class="race-grid" id="pjRaceGrid"></div>
+              <div class="pj-step-nav">
+                <button class="action-btn secondary" onclick="pjGoStep(1)">← Atrás</button>
+                <button class="action-btn" onclick="pjGoStep(3)" id="pjStep2Next" style="display:none">Siguiente →</button>
+              </div>
+            </div>
+
+            <div id="pj-step-3" class="pj-step">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 3 — Clase</h3>
+              <p class="section-desc">Elegí la clase de tu aventurero. Define tu Dado de Aguante, armas disponibles y talentos de clase.</p>
+              <div class="class-grid" id="pjClassGrid"></div>
+              <div class="pj-step-nav">
+                <button class="action-btn secondary" onclick="pjGoStep(2)">← Atrás</button>
+                <button class="action-btn" onclick="pjGoStep(4)" id="pjStep3Next" style="display:none">Siguiente →</button>
+              </div>
+            </div>
+
+            <div id="pj-step-4" class="pj-step">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 4 — Habilidades</h3>
+              <p class="section-desc">Tenés <strong id="pjSkillPointsLeft">4</strong> puntos para distribuir entre las 6 habilidades. Máximo 1 punto por habilidad.</p>
+              <div class="skill-grid" id="pjSkillGrid"></div>
+              <div class="pj-step-nav">
+                <button class="action-btn secondary" onclick="pjGoStep(3)">← Atrás</button>
+                <button class="action-btn" onclick="pjGoStep(5)">Siguiente →</button>
+              </div>
+            </div>
+
+            <div id="pj-step-5" class="pj-step">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 5 — Trasfondo</h3>
+              <p class="section-desc">Escribí en una frase qué hacía tu personaje antes de dedicarse a la aventura.</p>
+              <div class="controls" style="flex-direction:column;gap:8px;">
+                <input type="text" id="pjTrasfondoInput" class="campaign-input" placeholder="ej: soldado en las guerras del norte" style="max-width:500px;" />
+                <button class="action-btn secondary" onclick="pjRandomTrasfondo()"><i class="fa-solid fa-shuffle"></i> Trasfondo aleatorio</button>
+              </div>
+              <div class="pj-step-nav">
+                <button class="action-btn secondary" onclick="pjGoStep(4)">← Atrás</button>
+                <button class="action-btn" onclick="pjGoStep(6)">Ver resumen →</button>
+              </div>
+            </div>
+
+            <div id="pj-step-6" class="pj-step">
+              <h3 class="section-title" style="font-size:1.1rem;">Paso 6 — Resumen del Personaje</h3>
+              <div id="pjSummaryBlock"></div>
+              <div class="controls" style="margin-top:14px;">
+                <button class="action-btn" onclick="pjExportSheet()"><i class="fa-solid fa-file-arrow-down"></i> Exportar ficha HTML</button>
+                <button class="action-btn secondary" onclick="copyResult('pjSummaryBlock')"><i class="fa-solid fa-copy"></i> Copiar TXT</button>
+                <button class="action-btn secondary" onclick="pjGoStep(1)"><i class="fa-solid fa-rotate"></i> Nuevo PJ</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN DADOS -->
+          <div class="mesa-section" id="mesa-dados">
+            <h3 class="section-title" style="font-size:1.1rem;">Tirador de Dados VE</h3>
+            <div class="dice-grid">
+              <button class="dice-btn active-dice" data-sides="4" onclick="selectDice(4)">d4</button>
+              <button class="dice-btn" data-sides="6" onclick="selectDice(6)">d6</button>
+              <button class="dice-btn" data-sides="8" onclick="selectDice(8)">d8</button>
+              <button class="dice-btn" data-sides="10" onclick="selectDice(10)">d10</button>
+              <button class="dice-btn" data-sides="12" onclick="selectDice(12)">d12</button>
+              <button class="dice-btn" data-sides="20" onclick="selectDice(20)">d20</button>
+              <button class="dice-btn" data-sides="100" onclick="selectDice(100)">d%</button>
+            </div>
+            <div class="controls" style="align-items:center;gap:12px;">
+              <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Cantidad:</label>
+              <select id="diceCount" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;color:#241a14;">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+              </select>
+              <button class="action-btn" onclick="rollDiceVE()"><i class="fa-solid fa-dice"></i> Tirar</button>
+              <button class="action-btn secondary" onclick="rollWithAdvantage()">Ventaja (2d20↑)</button>
+              <button class="action-btn secondary" onclick="rollWithDisadvantage()">Desventaja (2d20↓)</button>
+            </div>
+            <div class="dice-result-big" id="diceResultBig">—</div>
+            <div class="dice-result-detail" id="diceResultDetail"></div>
+
+            <div class="bonus-divider"></div>
+
+            <h3 class="section-title" style="font-size:1.1rem;">Tirada de Instintos</h3>
+            <p class="section-desc">1d20 + bono de Instintos + modificador de atributo. Superar la dificultad es un éxito.</p>
+            <div class="controls" style="flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Bono INS:</label>
+                <input type="number" id="instBonus" value="0" min="-5" max="15" style="width:54px;padding:6px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;text-align:center;color:#241a14;" />
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Atributo:</label>
+                <select id="instAttr" style="padding:6px 8px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;color:#241a14;">
+                  <option value="0">— Ninguno —</option>
+                  <option value="fue">FUE</option>
+                  <option value="des">DES</option>
+                  <option value="con">CON</option>
+                  <option value="int">INT</option>
+                  <option value="sab">SAB</option>
+                  <option value="car">CAR</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Mod atrib:</label>
+                <input type="number" id="instAttrMod" value="0" min="-2" max="2" style="width:54px;padding:6px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;text-align:center;color:#241a14;" />
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Dificultad:</label>
+                <select id="instDiff" style="padding:6px 8px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;color:#241a14;">
+                  <option value="11">11+</option>
+                  <option value="14">14+</option>
+                  <option value="17">17+</option>
+                  <option value="20">20+</option>
+                </select>
+              </div>
+              <button class="action-btn" onclick="rollInstintos()"><i class="fa-solid fa-shield-halved"></i> Tirar Instintos</button>
+            </div>
+            <div id="instintosResult"></div>
+
+            <div class="bonus-divider"></div>
+            <h3 class="section-title" style="font-size:1.1rem;">Historial de tiradas</h3>
+            <div class="dice-history-list" id="diceHistory"></div>
+            <button class="mini-btn" onclick="clearDiceHistory()" style="margin-top:8px;">Limpiar historial</button>
+          </div>
+
+          <!-- SECCIÓN COMBATE -->
+          <div class="mesa-section" id="mesa-combate">
+            <h3 class="section-title" style="font-size:1.1rem;">Rastreador de Combate</h3>
+            <p class="section-desc">Agregá combatientes, iniciá el combate (ordenado por DES) y rastreá PV en tiempo real.</p>
+            <div class="controls" style="flex-wrap:wrap;gap:8px;align-items:flex-end;">
+              <input type="text" id="combatName" placeholder="Nombre" class="campaign-input" style="max-width:160px;" />
+              <input type="number" id="combatDES" placeholder="DES" min="3" max="18" class="campaign-input" style="max-width:70px;" />
+              <input type="number" id="combatDEF" placeholder="DEF" min="10" max="22" class="campaign-input" style="max-width:70px;" />
+              <input type="number" id="combatPV" placeholder="PV" min="1" max="200" class="campaign-input" style="max-width:70px;" />
+              <label style="font-size:0.82rem;color:rgba(242,219,154,0.9);">
+                <input type="checkbox" id="combatIsPJ" style="margin-right:4px;" /> PJ
+              </label>
+              <button class="action-btn" onclick="addCombatant()"><i class="fa-solid fa-plus"></i> Agregar</button>
+            </div>
+            <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="action-btn" onclick="startCombat()"><i class="fa-solid fa-swords"></i> Iniciar combate</button>
+              <button class="action-btn secondary" onclick="nextTurn()"><i class="fa-solid fa-chevron-right"></i> Siguiente turno</button>
+              <button class="action-btn secondary" onclick="resetCombat()"><i class="fa-solid fa-rotate"></i> Reiniciar</button>
+            </div>
+            <div id="combatTurnIndicator"></div>
+            <div class="combatant-list" id="combatantList"></div>
+          </div>
+
+          <!-- SECCIÓN BESTIARIO -->
+          <div class="mesa-section" id="mesa-bestiario">
+            <h3 class="section-title" style="font-size:1.1rem;">Bestiario VE</h3>
+            <p class="section-desc">Los monstruos del manual de Vieja Escuela. Hacé clic en cualquiera para agregar al rastreador de combate.</p>
+            <div class="bestiary-grid" id="bestiaryGrid"></div>
+            <div class="bonus-divider"></div>
+            <h3 class="section-title" style="font-size:1.1rem;">Generador de Monstruo Aleatorio</h3>
+            <p class="section-desc">Generá un monstruo único para sorprender a tus jugadores. El nivel determina ATQ, INS y PV.</p>
+            <div class="controls" style="align-items:center;gap:10px;">
+              <label style="font-size:0.85rem;color:rgba(242,219,154,0.9);">Nivel:</label>
+              <select id="monsterLevel" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(216,174,87,0.2);background:rgba(255,248,231,0.9);font-family:Cinzel,serif;font-size:0.9rem;color:#241a14;">
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+                <option>9</option><option>10</option>
+              </select>
+              <button class="action-btn" onclick="generateRandomMonster()"><i class="fa-solid fa-wand-sparkles"></i> Generar</button>
+            </div>
+            <div class="result empty" id="randomMonsterResult"><span><i class="fa-solid fa-dragon result-empty-icon"></i>El portal del bestiario aguarda ser invocado.</span></div>
+            <div class="subcontrols">
+              <button class="mini-btn" onclick="exportTXT('randomMonsterResult', 'monstruo-ve.txt')">Exportar TXT</button>
+              <button class="mini-btn" onclick="addRandomMonsterToCombat()">Agregar al combate</button>
+            </div>
+          </div>
+
         </article>
       </section>
 
