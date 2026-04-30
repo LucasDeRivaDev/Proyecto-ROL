@@ -5006,6 +5006,70 @@
       block.dataset.textContent = `=== PERSONAJE VIEJA ESCUELA ===\nRaza: ${pjState.race}\nClase: ${pjState.className} | Nivel 1\nAtributos: ${Object.entries(attrs).map(([k,v]) => `${k} ${v}`).join(" | ")}\nPV: ${Math.max(1,pv)} | DEF: ${def} | ATQ: +${tbl.atq} | INS: +${tbl.ins} | POD: ${Math.max(0,tbl.pod+mod("INT"))} | MOV: ${mov}\nHabilidades: ${skillsList}\nTalentos: ${allTalentos}\nTrasfondo: ${trasfondo}\nMonedas: ${monedas} mo`;
     }
 
+    // ===== TIRADOR DE DADOS VE =====
+
+    function selectDice(sides) {
+      selectedDiceSides = sides;
+      document.querySelectorAll(".dice-btn").forEach((btn) => {
+        btn.classList.toggle("active-dice", parseInt(btn.dataset.sides) === sides);
+      });
+    }
+
+    function addDiceHistory(text) {
+      const ts = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      diceHistoryArr.unshift(`[${ts}] ${text}`);
+      if (diceHistoryArr.length > 10) diceHistoryArr.pop();
+      const el = document.getElementById("diceHistory");
+      if (el) el.innerHTML = diceHistoryArr.map((line) => `<div>${line}</div>`).join("");
+    }
+
+    function rollDiceVE() {
+      const count = parseInt(document.getElementById("diceCount").value) || 1;
+      const sides = selectedDiceSides;
+      const results = Array.from({ length: count }, () => roll(sides));
+      const total = results.reduce((a, b) => a + b, 0);
+      document.getElementById("diceResultBig").textContent = total;
+      const detail = count > 1 ? `(${results.join(" + ")})` : `d${sides}`;
+      document.getElementById("diceResultDetail").textContent = detail;
+      addDiceHistory(`${count}d${sides} → ${results.join("+")} = ${total}`);
+    }
+
+    function rollWithAdvantage() {
+      const a = roll(20), b = roll(20);
+      const best = Math.max(a, b);
+      document.getElementById("diceResultBig").textContent = best;
+      document.getElementById("diceResultDetail").textContent = `Ventaja: ${a} vs ${b} → queda ${best}`;
+      addDiceHistory(`Ventaja 2d20 → ${a} vs ${b} = ${best}`);
+    }
+
+    function rollWithDisadvantage() {
+      const a = roll(20), b = roll(20);
+      const worst = Math.min(a, b);
+      document.getElementById("diceResultBig").textContent = worst;
+      document.getElementById("diceResultDetail").textContent = `Desventaja: ${a} vs ${b} → queda ${worst}`;
+      addDiceHistory(`Desventaja 2d20 → ${a} vs ${b} = ${worst}`);
+    }
+
+    function rollInstintos() {
+      const bonus = parseInt(document.getElementById("instBonus").value) || 0;
+      const attrMod = parseInt(document.getElementById("instAttrMod").value) || 0;
+      const diff = parseInt(document.getElementById("instDiff").value) || 11;
+      const attrName = document.getElementById("instAttr").value;
+      const d20 = roll(20);
+      const total = d20 + bonus + attrMod;
+      const success = total >= diff;
+      const breakdown = `d20(${d20}) + INS(${bonus}) + ${attrName !== "0" ? attrName : "0"}(${attrMod}) = ${total} vs ${diff}+`;
+      const el = document.getElementById("instintosResult");
+      el.innerHTML = `<div class="instintos-result ${success ? "exito" : "fallo"}">${success ? "✓ ÉXITO" : "✗ FALLO"} — ${breakdown}</div>`;
+      addDiceHistory(`Instintos ${breakdown} → ${success ? "ÉXITO" : "FALLO"}`);
+    }
+
+    function clearDiceHistory() {
+      diceHistoryArr = [];
+      const el = document.getElementById("diceHistory");
+      if (el) el.innerHTML = "";
+    }
+
     function pjExportSheet() {
       const attrs = pjState.attributes;
       const mod = (attr) => getAbilityModifier(attrs[attr] || 10);
@@ -5188,6 +5252,8 @@
       pjGoStep, pjRollAttributes, pjAutoAssign, pjSetAttribute, pjSelectRace,
       pjSelectClass, pjChangeSkill, pjRandomTrasfondo,
       pjExportSheet,
+      selectDice, rollDiceVE, rollWithAdvantage, rollWithDisadvantage,
+      rollInstintos, clearDiceHistory,
     });
 
     loadFavoritesFromStorage();
