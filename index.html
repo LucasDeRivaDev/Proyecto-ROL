@@ -5448,6 +5448,11 @@
       URL.revokeObjectURL(url);
     }
 
+    function pjSelectRolledValue(index) {
+      // No-op: la asignación de atributos se hace via los selectores
+      // Esta función existe para evitar errores de referencia desde onclick generado dinámicamente
+    }
+
     function activateMesaTab(targetId) {
       document.querySelectorAll(".mesa-tab-btn").forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.mesa === targetId);
@@ -5528,6 +5533,7 @@
       exportBonusTreasure,
       simulateDownload,
       activateMesaTab,
+      pjSelectRolledValue,
       pjGoStep, pjRollAttributes, pjAutoAssign, pjSetAttribute, pjSelectRace,
       pjSelectClass, pjChangeSkill, pjRandomTrasfondo,
       pjExportSheet,
