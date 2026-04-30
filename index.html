@@ -2226,7 +2226,7 @@
     function buildNPCEntry(base = {}) {
       const race = base.race || pick(data.npcs.races);
       const job = base.job || pick(data.npcs.jobs);
-      const level = Math.min(6, Math.max(1, base.level || roll(6)));
+      const level = Math.min(14, Math.max(1, base.level || rollMany(2, 6) + 1));
       const abilities = cloneAbilities(base.abilities) || rollAbilityBlock(job);
       const dex = getAbilityValue(abilities, "DES");
       const con = getAbilityValue(abilities, "CON");
