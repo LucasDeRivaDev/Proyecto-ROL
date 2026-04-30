@@ -5042,6 +5042,7 @@
         next = (next + 1) % combatState.combatants.length;
         loops++;
       }
+      if (loops >= combatState.combatants.length) return; // todos caídos
       if (next <= combatState.currentIndex) combatState.round++;
       combatState.currentIndex = next;
       renderCombatList();
