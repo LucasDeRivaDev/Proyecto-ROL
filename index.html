@@ -2897,19 +2897,6 @@
       return abilities.map((ability) => `${ability.label} ${ability.score} (${ability.mod >= 0 ? "+" : ""}${ability.mod})`).join(" | ");
     }
 
-    function rollMonsterHP(level) {
-      if (level <= 0) return roll(4);
-      return Array.from({ length: level }, () => roll(8)).reduce((total, value) => total + value, 0);
-    }
-
-    function uniquePick(list, used) {
-      let candidate = pick(list);
-      while (used.includes(candidate) && used.length < list.length) {
-        candidate = pick(list);
-      }
-      return candidate;
-    }
-
     function cloneEntry(entry) {
       return JSON.parse(JSON.stringify(entry));
     }
