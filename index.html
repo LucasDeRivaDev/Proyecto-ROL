@@ -5006,6 +5006,105 @@
       block.dataset.textContent = `=== PERSONAJE VIEJA ESCUELA ===\nRaza: ${pjState.race}\nClase: ${pjState.className} | Nivel 1\nAtributos: ${Object.entries(attrs).map(([k,v]) => `${k} ${v}`).join(" | ")}\nPV: ${Math.max(1,pv)} | DEF: ${def} | ATQ: +${tbl.atq} | INS: +${tbl.ins} | POD: ${Math.max(0,tbl.pod+mod("INT"))} | MOV: ${mov}\nHabilidades: ${skillsList}\nTalentos: ${allTalentos}\nTrasfondo: ${trasfondo}\nMonedas: ${monedas} mo`;
     }
 
+    function pjExportSheet() {
+      const attrs = pjState.attributes;
+      const mod = (attr) => getAbilityModifier(attrs[attr] || 10);
+      const race = VE_RACES[pjState.race] || VE_RACES.Humano;
+      const cls  = VE_CLASSES[pjState.className] || VE_CLASSES.Guerrero;
+      const tbl  = getClassTable(pjState.className || "Guerrero", 1);
+      const pv   = Math.max(1, cls.da + mod("CON"));
+      const def  = 10 + mod("DES");
+      const allTalentos = [...race.talentos, ...cls.talentos];
+      const fmtMod = (v) => (v >= 0 ? "+" : "") + v;
+
+      const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>Ficha de Personaje — Vieja Escuela</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+  *{box-sizing:border-box}
+  body{font-family:Cinzel,serif;background:#f4e8cc;color:#1a1008;margin:0;padding:24px}
+  h1{font-size:1.5rem;text-align:center;margin:0 0 4px;border-bottom:2px solid #5a3c12;padding-bottom:8px}
+  .subtitle{text-align:center;font-size:0.8rem;color:#5a3c12;margin-bottom:18px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+  .box{border:1px solid #8b6040;border-radius:8px;padding:10px 14px}
+  .box h3{margin:0 0 8px;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.08em;color:#5a3c12;border-bottom:1px solid #c4a06a;padding-bottom:4px}
+  .attr-row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;text-align:center}
+  .attr-cell{border:1px solid #c4a06a;border-radius:6px;padding:6px 2px}
+  .attr-label{font-size:0.65rem;font-weight:700;color:#5a3c12;text-transform:uppercase}
+  .attr-score{font-size:1.2rem;font-weight:700}
+  .attr-mod{font-size:0.75rem;color:#5a3c12}
+  .stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;text-align:center}
+  .stat-cell{border:1px solid #c4a06a;border-radius:6px;padding:6px 2px}
+  .stat-lbl{font-size:0.65rem;font-weight:700;color:#5a3c12}
+  .stat-val{font-size:1.1rem;font-weight:700}
+  ul{margin:4px 0;padding-left:18px;font-size:0.82rem;line-height:1.7}
+  .lines{border-top:1px solid #c4a06a;margin-top:10px;padding-top:4px}
+  .line{border-bottom:1px dashed #c4a06a;margin-bottom:10px;min-height:20px}
+  @media print{body{background:#fff}}
+</style>
+</head>
+<body>
+<h1>Vieja Escuela — Ficha de Personaje</h1>
+<div class="subtitle">Nivel 1 &nbsp;·&nbsp; ${pjState.race || "—"} &nbsp;·&nbsp; ${pjState.className || "—"}</div>
+<div class="box" style="margin-bottom:14px">
+  <h3>Atributos</h3>
+  <div class="attr-row">
+    ${["FUE","DES","CON","INT","SAB","CAR"].map((a) => `
+    <div class="attr-cell">
+      <div class="attr-label">${a}</div>
+      <div class="attr-score">${attrs[a] || "—"}</div>
+      <div class="attr-mod">${attrs[a] ? fmtMod(mod(a)) : "—"}</div>
+    </div>`).join("")}
+  </div>
+</div>
+<div class="row">
+  <div class="box">
+    <h3>Estadísticas</h3>
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-lbl">PV</div><div class="stat-val">${pv}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">DEF</div><div class="stat-val">${def}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">ATQ</div><div class="stat-val">+${tbl.atq}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">INS</div><div class="stat-val">+${tbl.ins}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">POD</div><div class="stat-val">${Math.max(0,tbl.pod+mod("INT"))}</div></div>
+      <div class="stat-cell"><div class="stat-lbl">MOV</div><div class="stat-val">${race.mov}</div></div>
+    </div>
+  </div>
+  <div class="box">
+    <h3>Habilidades</h3>
+    <ul>${VE_SKILLS_LIST.map((s) => `<li>${s}: ${pjState.skills[s]}</li>`).join("")}</ul>
+  </div>
+</div>
+<div class="row">
+  <div class="box">
+    <h3>Talentos</h3>
+    <ul>${allTalentos.map((t) => `<li>${t}</li>`).join("")}</ul>
+  </div>
+  <div class="box">
+    <h3>Trasfondo</h3>
+    <p style="font-size:0.85rem;margin:4px 0">${pjState.trasfondo || "—"}</p>
+  </div>
+</div>
+<div class="box">
+  <h3>Armas &amp; Equipo</h3>
+  <div class="lines">
+    <div class="line"></div><div class="line"></div><div class="line"></div>
+  </div>
+</div>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ficha-pj-ve-${Date.now()}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function activateMesaTab(targetId) {
       document.querySelectorAll(".mesa-tab-btn").forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.mesa === targetId);
@@ -5088,6 +5187,7 @@
       activateMesaTab,
       pjGoStep, pjRollAttributes, pjAutoAssign, pjSetAttribute, pjSelectRace,
       pjSelectClass, pjChangeSkill, pjRandomTrasfondo,
+      pjExportSheet,
     });
 
     loadFavoritesFromStorage();
