@@ -5006,6 +5006,61 @@
       block.dataset.textContent = `=== PERSONAJE VIEJA ESCUELA ===\nRaza: ${pjState.race}\nClase: ${pjState.className} | Nivel 1\nAtributos: ${Object.entries(attrs).map(([k,v]) => `${k} ${v}`).join(" | ")}\nPV: ${Math.max(1,pv)} | DEF: ${def} | ATQ: +${tbl.atq} | INS: +${tbl.ins} | POD: ${Math.max(0,tbl.pod+mod("INT"))} | MOV: ${mov}\nHabilidades: ${skillsList}\nTalentos: ${allTalentos}\nTrasfondo: ${trasfondo}\nMonedas: ${monedas} mo`;
     }
 
+    // ===== BESTIARIO VE =====
+
+    function rollMonsterHP(nivel) {
+      if (nivel <= 0) return roll(4);
+      return rollMany(nivel, 8);
+    }
+
+    function uniquePick(pool, already) {
+      const available = pool.filter((item) => !already.includes(item));
+      return available.length > 0 ? pick(available) : pick(pool);
+    }
+
+    function renderBestiary() {
+      const el = document.getElementById("bestiaryGrid");
+      if (!el) return;
+      el.innerHTML = VE_BESTIARY.map((m) => {
+        const pvRange = m.nivel <= 0 ? "1d4" : `${m.nivel}d8`;
+        const atq = m.nivel <= 0 ? "+0" : `+${m.nivel}`;
+        const ins = m.nivel <= 0 ? "+0" : `+${m.nivel}`;
+        return `
+          <div class="monster-card" onclick="quickAddMonsterToCombat('${m.nombre}', ${m.nivel}, ${m.def}, '${pvRange}')">
+            <h4>${m.nombre}</h4>
+            <div class="monster-stat-line"><strong>Niv ${m.nivel}</strong> &nbsp;|&nbsp; DEF ${m.def} &nbsp;|&nbsp; PV ${pvRange}</div>
+            <div class="monster-stat-line">ATQ ${atq} &nbsp;|&nbsp; INS ${ins} &nbsp;|&nbsp; Daño ${m.daño}</div>
+            <div class="monster-talent">${m.talentos}</div>
+          </div>`;
+      }).join("");
+    }
+
+    function quickAddMonsterToCombat(nombre, nivel, def, pvFormula) {
+      const pv = rollMonsterHP(nivel);
+      combatState.combatants.push({ name: nombre, des: 10, def, pvMax: pv, pvCurrent: pv, isPJ: false, fallen: false, guardOpen: false });
+      renderCombatList();
+      const flash = document.createElement("div");
+      flash.textContent = `${nombre} agregado al combate (PV ${pv})`;
+      flash.style.cssText = "position:fixed;bottom:20px;right:20px;background:#2d4a41;color:#f4e5bc;padding:10px 16px;border-radius:10px;font-family:Cinzel,serif;font-size:0.85rem;z-index:999;border:1px solid rgba(216,174,87,0.3)";
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 2200);
+    }
+
+    function generateRandomMonster() {
+      const nivel = parseInt(document.getElementById("monsterLevel").value) || 1;
+      const pv = rollMonsterHP(nivel);
+      const def = 10 + Math.floor(nivel / 2);
+      const numTalents = nivel >= 4 ? 2 : 1;
+      const talents = [];
+      for (let i = 0; i < numTalents; i++) {
+        talents.push(uniquePick(VE_MONSTER_TALENTS_POOL, talents));
+      }
+      const nombre = `${pick(VE_MONSTER_PREFIXES)} ${pick(VE_MONSTER_NOUNS)}`;
+      lastGeneratedMonster = { nombre, nivel, def, pv };
+      const text = `=== MONSTRUO GENERADO ===\nNombre: ${nombre}\nNivel: ${nivel} | DEF: ${def} | PV: ${pv}\nATQ: +${nivel} | INS: +${nivel}\nTalentos: ${talents.join("; ")}`;
+      setEmptyContent("randomMonsterResult", text.replace(/\n/g, "<br>"));
+    }
+
     // ===== RASTREADOR DE COMBATE =====
 
     function addCombatant() {
@@ -5426,6 +5481,7 @@
       applyDamage, applyHeal, applyBandage, applyCustomDmg, removeCombatant,
       rollCritical, rollFumble, rollQuickInstinct,
       renderCombatList, renderTurnIndicator, addRandomMonsterToCombat,
+      renderBestiary, quickAddMonsterToCombat, generateRandomMonster,
     });
 
     loadFavoritesFromStorage();
@@ -5433,6 +5489,7 @@
     renderSection("npcs");
     renderSection("dungeons");
     renderSection("quests");
+    renderBestiary();
   </script>
 </body>
 </html>
