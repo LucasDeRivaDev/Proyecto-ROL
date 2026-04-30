@@ -1819,7 +1819,7 @@
               <div id="pjSummaryBlock"></div>
               <div class="controls" style="margin-top:14px;">
                 <button class="action-btn" onclick="pjExportSheet()"><i class="fa-solid fa-file-arrow-down"></i> Exportar ficha HTML</button>
-                <button class="action-btn secondary" onclick="copyResult('pjSummaryBlock')"><i class="fa-solid fa-copy"></i> Copiar TXT</button>
+                <button class="action-btn secondary" onclick="pjCopyTXT()"><i class="fa-solid fa-copy"></i> Copiar TXT</button>
                 <button class="action-btn secondary" onclick="pjGoStep(1)"><i class="fa-solid fa-rotate"></i> Nuevo PJ</button>
               </div>
             </div>
@@ -2684,7 +2684,8 @@
       bonusSettlementResult: '<span><i class="fa-solid fa-house-chimney result-empty-icon"></i>El mapa aún no muestra un nuevo asentamiento.</span>',
       bonusFactionResult: '<span><i class="fa-solid fa-people-group result-empty-icon"></i>Todavía no emergió ninguna facción en este territorio.</span>',
       bonusTreasureResult: '<span><i class="fa-solid fa-gem result-empty-icon"></i>El botín menor todavía no salió a la luz.</span>',
-      magicItemResult: '<span><i class="fa-solid fa-hat-wizard result-empty-icon"></i>El grimorio aguarda un objeto por revelar.</span>'
+      magicItemResult: '<span><i class="fa-solid fa-hat-wizard result-empty-icon"></i>El grimorio aguarda un objeto por revelar.</span>',
+      randomMonsterResult: '<span><i class="fa-solid fa-dragon result-empty-icon"></i>El portal del bestiario aguarda ser invocado.</span>'
     };
 
     const storageKey = "rolmaster-kit-favorites-v2";
@@ -3835,9 +3836,20 @@
     // Copia al portapapeles con fallback para contextos no seguros.
     async function copyResult(resultId) {
       const text = document.getElementById(resultId).textContent.trim();
-      const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
 
-      if (!hasGeneratedContent(text, section)) {
+      // Para las 3 secciones principales usamos sectionConfig; para el resto, emptyMarkup.
+      let isEmpty;
+      if (resultId === "npcResult" || resultId === "dungeonResult" || resultId === "questResult") {
+        const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
+        isEmpty = !hasGeneratedContent(text, section);
+      } else {
+        const emptyEl = document.createElement("div");
+        emptyEl.innerHTML = emptyMarkup[resultId] || "";
+        const emptyText = emptyEl.textContent.trim();
+        isEmpty = !text || (emptyText && text === emptyText);
+      }
+
+      if (isEmpty) {
         alert("Primero generá un resultado.");
         return;
       }
@@ -3941,9 +3953,20 @@
     // Exporta un archivo .txt legible con el contenido generado.
     function exportTXT(resultId, filename) {
       const text = document.getElementById(resultId).textContent.trim();
-      const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
 
-      if (!hasGeneratedContent(text, section)) {
+      // Para las 3 secciones principales usamos sectionConfig; para el resto, emptyMarkup.
+      let isEmpty;
+      if (resultId === "npcResult" || resultId === "dungeonResult" || resultId === "questResult") {
+        const section = resultId === "npcResult" ? "npcs" : resultId === "dungeonResult" ? "dungeons" : "quests";
+        isEmpty = !hasGeneratedContent(text, section);
+      } else {
+        const emptyEl = document.createElement("div");
+        emptyEl.innerHTML = emptyMarkup[resultId] || "";
+        const emptyText = emptyEl.textContent.trim();
+        isEmpty = !text || (emptyText && text === emptyText);
+      }
+
+      if (isEmpty) {
         alert("Primero generá un resultado.");
         return;
       }
@@ -5114,7 +5137,7 @@
       const nombre = `${pick(VE_MONSTER_PREFIXES)} ${pick(VE_MONSTER_NOUNS)}`;
       lastGeneratedMonster = { nombre, nivel, def, pv };
       const text = `=== MONSTRUO GENERADO ===\nNombre: ${nombre}\nNivel: ${nivel} | DEF: ${def} | PV: ${pv}\nATQ: +${nivel} | INS: +${nivel}\nTalentos: ${talents.join("; ")}`;
-      setEmptyContent("randomMonsterResult", text.replace(/\n/g, "<br>"));
+      setBonusResult("randomMonsterResult", text);
     }
 
     // ===== RASTREADOR DE COMBATE =====
@@ -5448,6 +5471,25 @@
       URL.revokeObjectURL(url);
     }
 
+    async function pjCopyTXT() {
+      const block = document.getElementById("pjSummaryBlock");
+      const text = block?.dataset?.textContent?.trim();
+      if (!text) { alert("Primero completá el personaje hasta el paso 6."); return; }
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const tmp = document.createElement("textarea");
+          tmp.value = text;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand("copy");
+          tmp.remove();
+        }
+        alert("Resumen del PJ copiado al portapapeles.");
+      } catch { alert("No se pudo copiar automáticamente. Probá nuevamente."); }
+    }
+
     function pjSelectRolledValue(index) {
       // No-op: la asignación de atributos se hace via los selectores
       // Esta función existe para evitar errores de referencia desde onclick generado dinámicamente
@@ -5536,7 +5578,7 @@
       pjSelectRolledValue,
       pjGoStep, pjRollAttributes, pjAutoAssign, pjSetAttribute, pjSelectRace,
       pjSelectClass, pjChangeSkill, pjRandomTrasfondo,
-      pjExportSheet,
+      pjExportSheet, pjCopyTXT,
       selectDice, rollDiceVE, rollWithAdvantage, rollWithDisadvantage,
       rollInstintos, clearDiceHistory,
       addCombatant, startCombat, nextTurn, resetCombat,
