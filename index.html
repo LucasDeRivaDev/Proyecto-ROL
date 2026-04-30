@@ -2029,27 +2029,28 @@
     }
 
     function getClassTable(className, level) {
+      const lvl = Math.max(1, Math.min(14, level)) - 1;
       const tables = {
         Guerrero: {
-          atq: [0, 1, 1, 2, 2, 3],
-          pod: [0, 0, 0, 0, 0, 0],
-          ins: [1, 2, 3, 4, 5, 6]
+          atq: [0,1,1,2,2,3,4,5,6,7,7,8,9,9],
+          pod: [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          ins: [1,2,3,4,5,6,7,8,9,10,11,11,11,11]
         },
         Hechicero: {
-          atq: [0, 0, 0, 1, 1, 2],
-          pod: [1, 2, 4, 5, 7, 8],
-          ins: [0, 1, 2, 3, 4, 5]
+          atq: [0,0,0,1,1,2,2,3,3,3,4,4,4,5],
+          pod: [1,2,4,5,7,8,10,12,14,15,17,19,20,22],
+          ins: [0,1,2,3,4,5,6,7,8,9,10,10,10,10]
         },
         Bribón: {
-          atq: [0, 0, 1, 1, 2, 2],
-          pod: [0, 0, 0, 0, 0, 0],
-          ins: [0, 1, 2, 3, 4, 5]
+          atq: [0,0,1,1,2,2,3,3,4,5,5,6,7,7],
+          pod: [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          ins: [0,1,2,3,4,5,6,7,8,9,10,11,11,11]
         }
       };
       return {
-        atq: tables[className].atq[level - 1],
-        pod: tables[className].pod[level - 1],
-        ins: tables[className].ins[level - 1]
+        atq: tables[className].atq[lvl],
+        pod: tables[className].pod[lvl],
+        ins: tables[className].ins[lvl]
       };
     }
 
