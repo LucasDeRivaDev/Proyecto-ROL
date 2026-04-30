@@ -4803,6 +4803,202 @@
       alert("Este recurso se incluye en la versión completa");
     }
 
+    // ===== GENERADOR DE PJ =====
+
+    function pjGoStep(step) {
+      document.querySelectorAll(".pj-step").forEach((el) => el.classList.remove("active"));
+      const target = document.getElementById("pj-step-" + step);
+      if (target) target.classList.add("active");
+      if (step === 2) pjRenderRaces();
+      if (step === 3) pjRenderClasses();
+      if (step === 4) pjRenderSkills();
+      if (step === 6) pjRenderSummary();
+    }
+
+    function pjRollAttributes() {
+      const rolls = Array.from({ length: 7 }, () => rollMany(3, 6));
+      const min = Math.min(...rolls);
+      let minMarked = false;
+      pjState.rolledValues = rolls.map((v) => ({ value: v, isLowest: !minMarked && v === min ? (minMarked = true) : false, used: !minMarked && v === min }));
+      // reset attributes
+      Object.keys(pjState.attributes).forEach((k) => { pjState.attributes[k] = null; });
+      pjRenderRolledValues();
+      pjRenderAttrGrid();
+      document.getElementById("pjAutoAssignBtn").style.display = "inline-flex";
+      document.getElementById("pjStep1Next").style.display = "none";
+    }
+
+    function pjRenderRolledValues() {
+      const el = document.getElementById("pjRolledValues");
+      el.innerHTML = pjState.rolledValues.map((rv, i) => {
+        if (rv.isLowest) return `<span class="rolled-value lowest" title="Valor más bajo, descartado">${rv.value}</span>`;
+        return `<span class="rolled-value ${rv.used ? "used" : ""}" onclick="pjSelectRolledValue(${i})">${rv.value}</span>`;
+      }).join("");
+    }
+
+    function pjRenderAttrGrid() {
+      const attrs = ["FUE","DES","CON","INT","SAB","CAR"];
+      const available = pjState.rolledValues.filter((rv) => !rv.isLowest && !rv.used).map((rv) => rv.value);
+      const el = document.getElementById("pjAttrGrid");
+      el.innerHTML = attrs.map((attr) => {
+        const val = pjState.attributes[attr];
+        const mod = val !== null ? getAbilityModifier(val) : null;
+        const options = [val, ...available].filter((v) => v !== null);
+        return `
+          <div class="attr-box">
+            <label>${attr}</label>
+            <select onchange="pjSetAttribute('${attr}', this.value)">
+              <option value="">—</option>
+              ${options.map((v) => `<option value="${v}" ${val === v ? "selected" : ""}>${v}</option>`).join("")}
+            </select>
+            <div class="attr-mod">${mod !== null ? (mod >= 0 ? "+" : "") + mod : "—"}</div>
+          </div>`;
+      }).join("");
+    }
+
+    function pjSetAttribute(attr, value) {
+      const prev = pjState.attributes[attr];
+      if (prev !== null) {
+        const entry = pjState.rolledValues.find((rv) => rv.value === prev && rv.used && !rv.isLowest);
+        if (entry) entry.used = false;
+      }
+      if (value === "") {
+        pjState.attributes[attr] = null;
+      } else {
+        const num = parseInt(value);
+        pjState.attributes[attr] = num;
+        const entry = pjState.rolledValues.find((rv) => rv.value === num && !rv.used && !rv.isLowest);
+        if (entry) entry.used = true;
+      }
+      pjRenderRolledValues();
+      pjRenderAttrGrid();
+      const allSet = Object.values(pjState.attributes).every((v) => v !== null);
+      document.getElementById("pjStep1Next").style.display = allSet ? "inline-flex" : "none";
+    }
+
+    function pjAutoAssign() {
+      const priorities = {
+        Guerrero:  ["FUE","CON","DES","SAB","CAR","INT"],
+        Hechicero: ["INT","SAB","CON","DES","CAR","FUE"],
+        Bribón:    ["DES","CAR","INT","CON","SAB","FUE"]
+      };
+      const className = pjState.className || "Guerrero";
+      const order = priorities[className];
+      const values = pjState.rolledValues.filter((rv) => !rv.isLowest).map((rv) => rv.value).sort((a, b) => b - a);
+      pjState.rolledValues.forEach((rv) => { if (!rv.isLowest) rv.used = false; });
+      order.forEach((attr, i) => {
+        pjState.attributes[attr] = values[i];
+        const entry = pjState.rolledValues.find((rv) => rv.value === values[i] && !rv.used && !rv.isLowest);
+        if (entry) entry.used = true;
+      });
+      pjRenderRolledValues();
+      pjRenderAttrGrid();
+      document.getElementById("pjStep1Next").style.display = "inline-flex";
+    }
+
+    function pjRenderRaces() {
+      const el = document.getElementById("pjRaceGrid");
+      el.innerHTML = Object.entries(VE_RACES).map(([name, data]) => `
+        <div class="race-card ${pjState.race === name ? "selected" : ""}" onclick="pjSelectRace('${name}')">
+          <h4>${name}</h4>
+          <p><strong>MOV ${data.mov}</strong> — ${data.talentos.join(", ")}</p>
+          <p style="margin-top:6px">${data.desc}</p>
+        </div>
+      `).join("");
+    }
+
+    function pjSelectRace(name) {
+      pjState.race = name;
+      pjRenderRaces();
+      document.getElementById("pjStep2Next").style.display = "inline-flex";
+    }
+
+    function pjRenderClasses() {
+      const el = document.getElementById("pjClassGrid");
+      el.innerHTML = Object.entries(VE_CLASSES).map(([name, data]) => `
+        <div class="class-card ${pjState.className === name ? "selected" : ""}" onclick="pjSelectClass('${name}')">
+          <h4>${name} (d${data.da})</h4>
+          <p><strong>Talentos:</strong> ${data.talentos.join(", ")}</p>
+          <p style="margin-top:4px"><strong>Armas:</strong> ${data.armas}</p>
+          <p style="margin-top:4px">${data.desc}</p>
+        </div>
+      `).join("");
+    }
+
+    function pjSelectClass(name) {
+      pjState.className = name;
+      pjRenderClasses();
+      document.getElementById("pjStep3Next").style.display = "inline-flex";
+    }
+
+    function pjRenderSkills() {
+      const used = Object.values(pjState.skills).reduce((a, b) => a + b, 0);
+      const remaining = 4 - used;
+      const el = document.getElementById("pjSkillGrid");
+      document.getElementById("pjSkillPointsLeft").textContent = remaining;
+      el.innerHTML = VE_SKILLS_LIST.map((skill) => {
+        const val = pjState.skills[skill];
+        return `
+          <div class="skill-row">
+            <span>${skill}</span>
+            <div class="skill-counter">
+              <button onclick="pjChangeSkill('${skill}', -1)" ${val <= 0 ? "disabled" : ""}>−</button>
+              <span class="skill-val">${val}</span>
+              <button onclick="pjChangeSkill('${skill}', 1)" ${val >= 1 || remaining <= 0 ? "disabled" : ""}>+</button>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function pjChangeSkill(skill, delta) {
+      const current = pjState.skills[skill];
+      const used = Object.values(pjState.skills).reduce((a, b) => a + b, 0);
+      if (delta > 0 && (current >= 1 || used >= 4)) return;
+      if (delta < 0 && current <= 0) return;
+      pjState.skills[skill] = current + delta;
+      pjRenderSkills();
+    }
+
+    function pjRandomTrasfondo() {
+      document.getElementById("pjTrasfondoInput").value = pick(VE_TRASFONDOS);
+    }
+
+    function pjRenderSummary() {
+      const attrs = pjState.attributes;
+      const mod = (attr) => getAbilityModifier(attrs[attr] || 10);
+      const race = VE_RACES[pjState.race] || VE_RACES.Humano;
+      const cls  = VE_CLASSES[pjState.className] || VE_CLASSES.Guerrero;
+      const tbl  = getClassTable(pjState.className || "Guerrero", 1);
+      const pv   = cls.da + mod("CON");
+      const def  = 10 + mod("DES");
+      const mov  = race.mov;
+      const skillsList = Object.entries(pjState.skills).filter(([, v]) => v > 0).map(([k]) => k).join(", ") || "—";
+      const trasfondo = document.getElementById("pjTrasfondoInput")?.value || "—";
+      pjState.trasfondo = trasfondo;
+      const allTalentos = [...race.talentos, ...cls.talentos].join(", ");
+      const monedas = rollMany(3, 6) * 10;
+
+      const block = document.getElementById("pjSummaryBlock");
+      block.innerHTML = `
+        <div class="pj-summary-grid">
+          <div class="pj-stat-box"><div class="stat-label">PV</div><div class="stat-value">${Math.max(1, pv)}</div></div>
+          <div class="pj-stat-box"><div class="stat-label">DEF</div><div class="stat-value">${def}</div></div>
+          <div class="pj-stat-box"><div class="stat-label">ATQ</div><div class="stat-value">+${tbl.atq}</div></div>
+          <div class="pj-stat-box"><div class="stat-label">INS</div><div class="stat-value">+${tbl.ins}</div></div>
+          <div class="pj-stat-box"><div class="stat-label">POD</div><div class="stat-value">${Math.max(0, tbl.pod + mod("INT"))}</div></div>
+          <div class="pj-stat-box"><div class="stat-label">MOV</div><div class="stat-value">${mov}</div></div>
+        </div>
+        <div style="margin:10px 0;font-size:0.88rem;line-height:1.8;color:rgba(241,230,200,0.9);">
+          <strong>Raza:</strong> ${pjState.race || "—"} &nbsp;|&nbsp; <strong>Clase:</strong> ${pjState.className || "—"} (Nivel 1)<br>
+          <strong>Atributos:</strong> ${Object.entries(attrs).map(([k, v]) => `${k} ${v || "?"} (${(mod(k) >= 0 ? "+" : "") + mod(k)})`).join(" | ")}<br>
+          <strong>Habilidades:</strong> ${skillsList}<br>
+          <strong>Talentos:</strong> ${allTalentos}<br>
+          <strong>Trasfondo:</strong> ${trasfondo}<br>
+          <strong>Monedas iniciales:</strong> ${monedas} mo (tirada 3d6×10)
+        </div>`;
+      block.dataset.textContent = `=== PERSONAJE VIEJA ESCUELA ===\nRaza: ${pjState.race}\nClase: ${pjState.className} | Nivel 1\nAtributos: ${Object.entries(attrs).map(([k,v]) => `${k} ${v}`).join(" | ")}\nPV: ${Math.max(1,pv)} | DEF: ${def} | ATQ: +${tbl.atq} | INS: +${tbl.ins} | POD: ${Math.max(0,tbl.pod+mod("INT"))} | MOV: ${mov}\nHabilidades: ${skillsList}\nTalentos: ${allTalentos}\nTrasfondo: ${trasfondo}\nMonedas: ${monedas} mo`;
+    }
+
     function activateMesaTab(targetId) {
       document.querySelectorAll(".mesa-tab-btn").forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.mesa === targetId);
@@ -4882,7 +5078,9 @@
       copyBonusTreasure,
       exportBonusTreasure,
       simulateDownload,
-      activateMesaTab
+      activateMesaTab,
+      pjGoStep, pjRollAttributes, pjAutoAssign, pjSetAttribute, pjSelectRace,
+      pjSelectClass, pjChangeSkill, pjRandomTrasfondo,
     });
 
     loadFavoritesFromStorage();
